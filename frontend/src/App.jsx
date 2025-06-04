@@ -1,9 +1,12 @@
 import React from 'react'
+import TypingBox from './components/TypingBox'
+import Header from './components/Header'
 
 const App = () => {
   return (
     <div className="text-green-900">
-      Hello PP
+      <Header/>
+      <TypingBox/>
     </div>
   )
 }
