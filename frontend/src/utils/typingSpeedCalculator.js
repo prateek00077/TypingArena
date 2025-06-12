@@ -10,4 +10,3 @@ const finalScore = wpm * accuracy;
 const typingSpeedCalculator = ()=>{
     return finalScore;
 }
-
