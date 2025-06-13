@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { generateRandomText } from '../utils/textGenerator';
-// import typingSpeedCalculator from '../utils/typingSpeedCalculator';
 import ResultModal from './ResultModel';
-import { FcClock } from "react-icons/fc";
+import ClockTimer from '../utils/ClockTimer.jsx';
 
 const TypingBox = () => {
   const [text, setText] = useState('');
@@ -13,8 +12,8 @@ const TypingBox = () => {
   const [duration, setDuration] = useState(1);
   const timeoutRef = useRef(null);
 
-  useEffect(() => {
-   // Reset test when duration changes
+  // Reset test when duration changes
+    useEffect(() => {
     setText(generateRandomText(100));
     setUserInput('');
     setShowResult(false);
@@ -23,30 +22,11 @@ const TypingBox = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
   }, [duration]);
 
-  useEffect(() => {
-    // Start timer interval and auto-finish timeout when typing starts
-    let interval = null;
-    if (startTime && !showResult) {
-      interval = setInterval(() => {
-        setTimer(Math.floor((Date.now() - startTime) / 1000));
-      }, 1000);
-      timeoutRef.current = setTimeout(() => setShowResult(true), duration * 60000);
-    }
-    // Cleanup both interval and timeout on dependency change/unmount
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeoutRef.current);
-    };
-  }, [startTime, showResult, duration]);
-
   const handleChange = (e) => {
     if (!startTime) setStartTime(Date.now());
     const value = e.target.value;
     setUserInput(value);
-
-    // Show result when all text is typed 
     if (value.length === text.length) {
-      // your result function
       setShowResult(true);
     }
   };
@@ -62,30 +42,16 @@ const TypingBox = () => {
 
   return (
     <div className="flex flex-col items-center min-h-[50vh] justify-center bg-gradient-to-b from-gray-50 to-gray-200 relative">
-      {/* Centered clock and timer */}
-      <div className="absolute top-6 right-10 flex flex-col items-center gap-1">
-        <FcClock className="text-8xl" />
-        <div className="text-xl font-mono bg-white/80 px-4 py-2 rounded shadow mt-2">
-          {timer}s
-        </div>
-        <div className="flex items-center gap-2 mt-2">
-          <label className="font-mono text-lg">Duration:</label>
-          <select
-            className="font-mono px-2 py-1 rounded border"
-            value={duration}
-            onChange={e => setDuration(Number(e.target.value))}
-            disabled={startTime !== null && !showResult}
-          >
-            <option value={0.5}>30 sec</option>
-            <option value={1}>1 min</option>
-            <option value={2}>2 min</option>
-            <option value={3}>3 min</option>
-            <option value={4}>4 min</option>
-            <option value={5}>5 min</option>
-            <option value={10}>10 min</option>
-          </select>
-        </div>
-      </div>
+      <ClockTimer
+        timer={timer}
+        setTimer={setTimer}
+        startTime={startTime}
+        showResult={showResult}
+        duration={duration}
+        timeoutRef={timeoutRef}
+        setShowResult={setShowResult}
+        setDuration={setDuration}
+      />
       {showResult && (
         <ResultModal
           wpm="-"

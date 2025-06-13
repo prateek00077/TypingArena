@@ -1,5 +1,6 @@
 
-const ResultModal = ({ wpm, accuracy, finalScore, onRestart }) => (
+const ResultModal = ({ wpm, accuracy, finalScore, onRestart }) => 
+    (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
     <div className="bg-white rounded-2xl shadow-2xl px-12 py-10 text-center min-w-[350px] min-h-[260px] max-w-[90vw] max-h-[90vh] flex flex-col justify-center">
         <h2 className="text-3xl font-extrabold mb-6 text-blue-700">Congratulations Test Complete!</h2>
