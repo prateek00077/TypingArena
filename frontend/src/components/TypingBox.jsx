@@ -1,52 +1,92 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { generateRandomText } from '../utils/textGenerator';
+import ResultModal from './ResultModel';
+import ClockTimer from '../utils/ClockTimer.jsx';
 
 const TypingBox = () => {
   const [text, setText] = useState('');
   const [userInput, setUserInput] = useState('');
+  const [showResult, setShowResult] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+  const [timer, setTimer] = useState(0);
+  const [duration, setDuration] = useState(1);
+  const timeoutRef = useRef(null);
 
-  useEffect(() => {
+  // Reset test when duration changes
+    useEffect(() => {
     setText(generateRandomText(100));
-  }, []);
+    setUserInput('');
+    setShowResult(false);
+    setStartTime(null);
+    setTimer(0);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  }, [duration]);
 
   const handleChange = (e) => {
-    setUserInput(e.target.value);
+    if (!startTime) setStartTime(Date.now());
+    const value = e.target.value;
+    setUserInput(value);
+    if (value.length === text.length) {
+      setShowResult(true);
+    }
+  };
+
+  const handleRestart = () => {
+    setText(generateRandomText(100));
+    setUserInput('');
+    setShowResult(false);
+    setStartTime(null);
+    setTimer(0);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
   };
 
   return (
-    <div className="flex flex-col items-center min-h-[50vh] justify-center bg-gradient-to-b from-gray-50 to-gray-200">
-      <div className="w-full max-w-5xl rounded-xl shadow-lg bg-white/90 p-8 mb-8">
-        <div className="font-mono text-xl leading-relaxed tracking-wide min-h-32 text-gray-900 selection:bg-gray-300 selection:text-black break-words whitespace-pre-wrap">
+    <div className="flex flex-col items-center min-h-[50vh] justify-center bg-gradient-to-b from-gray-50 to-gray-200 relative">
+      <ClockTimer
+        timer={timer}
+        setTimer={setTimer}
+        startTime={startTime}
+        showResult={showResult}
+        duration={duration}
+        timeoutRef={timeoutRef}
+        setShowResult={setShowResult}
+        setDuration={setDuration}
+      />
+      {showResult && (
+        <ResultModal
+          wpm="-"
+          accuracy="-"
+          finalScore="-"
+          onRestart={handleRestart}
+        />
+      )}
+
+      <div className={`w-full max-w-5xl rounded-xl shadow-lg bg-white/90 p-8 mb-8 ${showResult ? 'opacity-40 pointer-events-none' : ''}`}>
+        <div className="font-mono text-xl leading-relaxed tracking-wide min-h-32 text-gray-900 selection:bg-gray-300 break-words whitespace-pre-wrap">
           {text.split('').map((char, idx) => {
+            const typedChar = userInput[idx];
             let color = 'text-gray-800';
-            if (userInput.length > 0) {
-              if (userInput[idx] === undefined) {
-                color = 'text-gray-800';
-              } else if (userInput[idx] === char) {
-                color = 'text-green-600';
-              } else {
-                color = 'text-red-500';
-              }
+            if (typedChar !== undefined) {
+              color = typedChar === char ? 'text-green-600' : 'text-red-500';
             }
             return (
-              <span
-                key={idx}
-                className={`transition-colors duration-150 ${color}`}
-              >
+              <span key={idx} className={`transition-colors duration-150 ${color}`}>
                 {char}
               </span>
             );
           })}
         </div>
       </div>
+
       <input
         type="text"
-        className="w-full max-w-5xl font-mono text-xl rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 bg-gray-50 shadow"
+        className={`w-full max-w-5xl font-mono text-xl rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 bg-gray-50 shadow ${showResult ? 'opacity-40 pointer-events-none' : ''}`}
         value={userInput}
         onChange={handleChange}
         placeholder="Start typing here..."
         autoFocus
         spellCheck={false}
+        disabled={showResult}
       />
     </div>
   );
