@@ -10,7 +10,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg">
+    <header className="fixed top-0 w-full z-50 bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo/Brand */}
@@ -25,9 +25,9 @@ const Header = () => {
             <a href="#" className="hover:text-indigo-300 transition-colors">Profile</a>
             <a href="#" className="hover:text-indigo-300 transition-colors">Room</a>
             <a href="#" className="hover:text-indigo-300 transition-colors">Settings</a>
-            
+
             {/* Dark Mode Toggle */}
-            <button 
+            <button
               onClick={toggleDarkMode}
               className="flex items-center space-x-1 hover:text-indigo-300 transition-colors"
             >
