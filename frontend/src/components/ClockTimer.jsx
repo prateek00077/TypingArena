@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { FcClock } from "react-icons/fc";
-import { DurationChange } from '../components/DurationSelect';
+import { DurationChange } from './DurationSelect';
 const ClockTimer = ({
     timer,
     setTimer,
