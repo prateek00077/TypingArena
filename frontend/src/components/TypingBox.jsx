@@ -75,7 +75,9 @@ const TypingBox = () => {
         </div>
 
         {showResult && (() => {
-          const { wpm, accuracy, finalScore } = calculateResults(userInput, text, timer);
+          // Calculate time spent in seconds
+          const timeSpentSeconds = duration * 60 - timer;
+          const { wpm, accuracy, finalScore } = calculateResults(userInput, text, timeSpentSeconds);
           return (
             <ResultModal
               wpm={wpm}
