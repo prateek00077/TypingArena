@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { generateRandomText } from '../utils/textGenerator';
+import { calculateResults } from '../utils/calculateResults.js';   
 import ResultModal from './ResultModel';
-import ClockTimer from '../utils/ClockTimer.jsx';
+import ClockTimer from './ClockTimer.jsx';
 
 const TypingBox = () => {
   const [text, setText] = useState('');
@@ -39,25 +40,10 @@ const TypingBox = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
   };
 
-  const calculateResults = () => {
-    const timeInMinutes = Math.max(timer, 1) / 60;
-    const correctChars = userInput
-      .split('')
-      .filter((char, idx) => char === text[idx]).length;
 
-    const grossWPM = (userInput.length / 5) / timeInMinutes;
-    const accuracy = (correctChars / userInput.length) * 100 || 0;
-    const finalScore = Math.round(grossWPM * (accuracy / 100));
-
-    return {
-      wpm: Math.round(grossWPM),
-      accuracy: Math.round(accuracy),
-      finalScore,
-    };
-  };
 
   return (
-<div className="flex h-screen pt-16 bg-gray-200 overflow-hidden justify-center items-center">
+    <div className="flex h-screen pt-16 bg-gray-200 overflow-hidden justify-center items-center">
       {/* Left Typing Section - 70% */}
       <div className="w-[90%] flex flex-col items-start justify-center px-8">
         <div className={`w-full rounded-xl shadow-lg bg-white p-8 mb-8 ${showResult ? 'opacity-40 pointer-events-none' : ''}`}>
@@ -89,7 +75,7 @@ const TypingBox = () => {
         </div>
 
         {showResult && (() => {
-          const { wpm, accuracy, finalScore } = calculateResults();
+          const { wpm, accuracy, finalScore } = calculateResults(userInput, text, timer);
           return (
             <ResultModal
               wpm={wpm}
@@ -99,6 +85,7 @@ const TypingBox = () => {
             />
           );
         })()}
+
       </div>
 
       {/* Right Timer Section - 30% */}
