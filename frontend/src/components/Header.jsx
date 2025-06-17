@@ -1,4 +1,6 @@
+import { User } from 'lucide-react';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // 👈 Add this
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 
 const Header = () => {
@@ -21,10 +23,10 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="hover:text-indigo-300 transition-colors">Home</a>
-            <a href="#" className="hover:text-indigo-300 transition-colors">Profile</a>
-            <a href="#" className="hover:text-indigo-300 transition-colors">Room</a>
-            <a href="#" className="hover:text-indigo-300 transition-colors">Settings</a>
+            <Link to="/" className="hover:text-indigo-300 transition-colors">Home</Link>
+
+            <Link to="/room" className="hover:text-indigo-300 transition-colors">Room</Link>
+            <Link to="/settings" className="hover:text-indigo-300 transition-colors">Settings</Link>
 
             {/* Dark Mode Toggle */}
             <button
@@ -43,6 +45,9 @@ const Header = () => {
                 </>
               )}
             </button>
+            <Link to="/profile">
+              <User className="w-6 h-6  hover:text-indigo-300 cursor-pointer" />
+            </Link>
           </nav>
         </div>
       </div>

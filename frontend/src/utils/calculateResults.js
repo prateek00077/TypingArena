@@ -14,3 +14,4 @@ export function calculateResults(userInput, text, timer) {
     finalScore,
   };
 }
+  
