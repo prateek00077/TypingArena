@@ -19,6 +19,12 @@ const ResultModal = ({ wpm, accuracy, finalScore, onRestart }) =>
     >
         Restart
     </button>
+    <button
+        className="bg-gray-500 text-white mt-2 px-8 py-3 rounded-lg hover:bg-blue-700 transition font-bold text-lg shadow"
+        onClick={onRestart}
+    >
+        Cancel
+    </button>
     </div>
 </div>
 );
