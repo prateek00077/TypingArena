@@ -10,7 +10,7 @@ const ClockTimer = ({
     timeoutRef,
     setShowResult,
     setDuration,
-    handleRestart,    
+    handleRestart,
     handleCancel
 }) => {
     useEffect(() => {
@@ -51,9 +51,6 @@ const ClockTimer = ({
                     {formatTime(startTime ? timer : duration * 60)}
                 </div>
             </div>
-
-
-
             <DurationChange
                 duration={duration}
                 setDuration={setDuration}
