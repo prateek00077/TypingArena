@@ -9,7 +9,8 @@ const [userStats, setUserStats] = useState({
     wpm: 72,
     accuracy: 94,
     totalCharactersTyped: 12000,
-    raceAttended: 56
+    raceAttended: 56,
+    joinedDate:'25/07/2025'
 });
 
 return (

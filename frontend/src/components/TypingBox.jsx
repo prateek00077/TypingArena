@@ -62,7 +62,7 @@ const TypingBox = () => {
 
           <input
             type="text"
-            className={`w-full mt-4 font-mono text-xl rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 bg-gray-50 dark:bg-gray-700 shadow ${showResult ? 'opacity-40 pointer-events-none' : ''}`}
+            className={`w-full mt-4 font-mono text-xl rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 bg-gray-50 dark:bg-gray-700 dark:text-white shadow ${showResult ? 'opacity-40 pointer-events-none' : ''}`}
             value={userInput}
             onChange={handleChange}
             placeholder="Start typing here..."

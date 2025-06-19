@@ -13,7 +13,7 @@ const RoomPage = () => {
     };
 
 return (
-    <div className="h-screen bg-gray-200 dark:bg-gray-900 flex justify-center items-center">
+    <div className="h-screen   bg-gray-200 dark:bg-gray-900 flex justify-center items-center">
         <div className="w-1/2  p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md space-y-6">
         <h2 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 text-center">
             Room Management
@@ -23,7 +23,7 @@ return (
         <section className="space-y-4">
             <div className="flex justify-center">
             <button
-                className="px-6  py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+                className="px-6  py-3  bg-gradient-to-r from-gray-900 to-gray-700  text-white rounded-lg  transition font-medium"
                 onClick={() => {setShowModal(true)}}
             > Create Room
             </button>

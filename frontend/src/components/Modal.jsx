@@ -11,13 +11,13 @@ return (
         
         <div className="flex justify-end space-x-4">
             <button
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+            className="px-6 py-2 bg-red-500 text-white rounded-lg  transition font-medium"
             onClick={onClose}
         >
             Cancel
         </button>
         <button
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+            className="px-6 py-2  text-white rounded-lg bg-gradient-to-r from-gray-900 to-gray-700 transition font-medium"
             onClick={onSubmit}
         >
             Create Room

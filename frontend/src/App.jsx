@@ -4,9 +4,11 @@ import Header from './components/Header';
 import Profile from './components/Profile';
 import Settings from './components/Settings';
 import RoomPage from './components/Roompage';
+import { AppContextProvider } from './context/AppContext';
 const App = () => {
   return (
-    <Router>
+      <AppContextProvider>
+      <Router>
       <div className="text-green-900">
         <Header />
         <Routes>
@@ -17,6 +19,8 @@ const App = () => {
         </Routes>
       </div>
     </Router>
+    </AppContextProvider>
+    
   );
 };
 
