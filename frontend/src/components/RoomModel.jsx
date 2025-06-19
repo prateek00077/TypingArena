@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Modal = ({ children, onClose, onSubmit }) => {
+const RoomModel = ({ children, onClose, onSubmit }) => {
 return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="w-1/2 h-2/3 bg-white rounded-lg shadow-lg p-6 space-y-4">
@@ -28,4 +28,4 @@ return (
 );
 };
 
-export default Modal;
+export default RoomModel;

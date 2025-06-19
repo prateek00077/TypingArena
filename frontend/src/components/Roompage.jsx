@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Modal from './Modal';
+import RoomModel from './RoomModel';
 import { DurationChange } from './DurationSelect';
 const RoomPage = () => {
     const [showModal, setShowModal] = useState(false);
@@ -34,7 +34,7 @@ return (
 
       {/* Modal */}
     {showModal && (
-        <Modal
+        <RoomModel
             title="Create Room"
             onClose={() => { setShowModal(false) }}
         onSubmit={handleSubmit}
@@ -60,7 +60,7 @@ return (
                 rows="4"
             ></textarea>
         </div>
-        </Modal>
+        </RoomModel>
     )}
     </div>
 );

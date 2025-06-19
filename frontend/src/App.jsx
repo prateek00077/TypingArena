@@ -3,7 +3,7 @@ import TypingBox from './components/TypingBox';
 import Header from './components/Header';
 import Profile from './components/Profile';
 import Settings from './components/Settings';
-import RoomPage from './components/Roompage';
+import RoomPage from './components/RoomPage';
 import { AppContextProvider } from './context/AppContext';
 const App = () => {
   return (
