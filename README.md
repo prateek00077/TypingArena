@@ -33,5 +33,5 @@
 
 ### 📁 Clone the Project
 ```bash
-git clone https://github.com/yourusername/typingArena.git
+git clone https://github.com/prateek00077/typingArena.git
 cd typingArena

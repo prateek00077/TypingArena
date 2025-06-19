@@ -1,20 +1,26 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-import Header from './components/Header';
 import TypingBox from './components/TypingBox';
-import Profile from './pages/Profile'; // 
+import Header from './components/Header';
+import Profile from './components/Profile';
+import Settings from './components/Settings';
+import RoomPage from './components/RoomPage';
+import { AppContextProvider } from './context/AppContext';
 const App = () => {
   return (
-    <Router>
+      <AppContextProvider>
+      <Router>
       <div className="text-green-900">
         <Header />
         <Routes>
           <Route path="/" element={<TypingBox />} />
+          <Route path="/room" element={<RoomPage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
     </Router>
+    </AppContextProvider>
+    
   );
 };
 
