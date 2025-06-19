@@ -40,19 +40,17 @@ const TypingBox = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
   };
 
-
-
   return (
     <div className="flex h-screen pt-16 bg-gray-200 overflow-hidden justify-center items-center">
       {/* Left Typing Section - 70% */}
       <div className="w-[90%] flex flex-col items-start justify-center px-8">
-        <div className={`w-full rounded-xl shadow-lg bg-white p-8 mb-8 ${showResult ? 'opacity-40 pointer-events-none' : ''}`}>
-          <div className="font-mono text-xl leading-relaxed tracking-wide min-h-32 text-gray-900 selection:bg-gray-300 break-words whitespace-pre-wrap">
+        <div className={`w-full rounded-xl shadow-lg bg-white  p-8 mb-8 ${showResult ? 'opacity-40 pointer-events-none' : ''}`}>
+          <div className="font-mono text-xl leading-relaxed tracking-wide min-h-32 text-gray-900 selection:bg-gray-300  break-words whitespace-pre-wrap">
             {text.split('').map((char, idx) => {
               const typedChar = userInput[idx];
               let color = 'text-gray-800';
               if (typedChar !== undefined) {
-                color = typedChar === char ? 'text-green-600' : 'text-red-500';
+                color = typedChar === char ? 'text-green-600' : 'text-red-500 ';
               }
               return (
                 <span key={idx} className={`transition-colors duration-150 ${color}`}>
@@ -64,7 +62,7 @@ const TypingBox = () => {
 
           <input
             type="text"
-            className={`w-full  mt-4 font-mono text-xl rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400 bg-gray-50 shadow ${showResult ? 'opacity-40 pointer-events-none' : ''}`}
+            className={`w-full mt-4 font-mono text-xl rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400  bg-gray-50  shadow ${showResult ? 'opacity-40 pointer-events-none' : ''}`}
             value={userInput}
             onChange={handleChange}
             placeholder="Start typing here..."
@@ -87,11 +85,10 @@ const TypingBox = () => {
             />
           );
         })()}
-
       </div>
 
       {/* Right Timer Section - 30% */}
-      <div className="w-[30%] flex  items-center justify-center px-4">
+      <div className="w-[30%] flex items-center justify-center px-4">
         <ClockTimer
           timer={timer}
           setTimer={setTimer}
