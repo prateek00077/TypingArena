@@ -32,7 +32,7 @@ return (
 
     </div>
 
-      {/* Modal */}
+      {/* RoomModel */}
     {showModal && (
         <RoomModel
             title="Create Room"
