@@ -9,7 +9,7 @@ const App = () => {
   return (
       <AppContextProvider>
       <Router>
-      <div className="text-green-900">
+      <div className="text-green-900 ">
         <Header />
         <Routes>
           <Route path="/" element={<TypingBox />} />
