@@ -1,69 +1,188 @@
+// import React, { useState } from 'react';
+// import RoomModel from './RoomModel';
+// import { DurationChange } from './DurationSelect';
+// const RoomPage = () => {
+//     const [showModal, setShowModal] = useState(false);
+//     const [paragraph, setParagraph] = useState('');
+//     const [duration, setDuration] = useState(1); 
+//     const [startTime, setStartTime] = useState(null);
+//     const [showResult, setShowResult] = useState(false); 
+//     const handleSubmit = () => {
+//         // Logic for new Race start according to this paragraph
+//     setShowModal(false);
+//     };
+
+// return (
+//     <div className="h-screen   bg-gray-200 flex justify-center items-center">
+//         <div className="w-1/2  p-6 bg-white rounded-xl shadow-md space-y-6">
+//         <h2 className="text-3xl font-semibold text-gray-900  text-center">
+//             Room Management
+//         </h2>
+
+//         {/* Create Room Section */}
+//         <section className="space-y-4">
+//             <div className="flex justify-center">
+//             <button
+//                 className="px-6  py-3  bg-gradient-to-r from-gray-900 to-gray-700  text-white rounded-lg  transition font-medium"
+//                 onClick={() => {setShowModal(true)}}
+//             > Create Room
+//             </button>
+//         </div>
+//         </section>
+
+//     </div>
+
+//       {/* RoomModel */}
+//     {showModal && (
+//         <RoomModel
+//             title="Create Room"
+//             onClose={() => { setShowModal(false) }}
+//         onSubmit={handleSubmit}
+//         >
+//         <div className="flex justify-center mt-4">
+//             <DurationChange 
+//             duration={duration}
+//             setDuration={setDuration}
+//             startTime={startTime}
+//             showResult={showResult}
+//             setShowResult = {setShowResult}
+//             setStartTime = {setStartTime}
+//     />
+// </div>
+//         <div>
+//             <label className="block text-sm font-medium text-gray-800 ">
+//                 Paste Paragraph:
+//             </label>
+//             <textarea
+//                 value={paragraph}
+//                 onChange={(e) => setParagraph(e.target.value)}
+//                 className="w-full h-60 px-4 py-2 rounded-lg border bg-gray-50  text-gray-800  focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                 rows="4"
+//             ></textarea>
+//         </div>
+//         </RoomModel>
+//     )}
+//     </div>
+// );
+// };
+
+// export default RoomPage;
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState } from 'react';
 import RoomModel from './RoomModel';
 import { DurationChange } from './DurationSelect';
+
 const RoomPage = () => {
-    const [showModal, setShowModal] = useState(false);
-    const [paragraph, setParagraph] = useState('');
-    const [duration, setDuration] = useState(1); 
-    const [startTime, setStartTime] = useState(null);
-    const [showResult, setShowResult] = useState(false); 
-    const handleSubmit = () => {
-        // Logic for new Race start according to this paragraph
-    setShowModal(false);
+  const [showModal, setShowModal] = useState(false);
+  const [paragraph, setParagraph] = useState('');
+  const [duration, setDuration] = useState(1);
+  const [startTime, setStartTime] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+
+  const [rooms, setRooms] = useState([
+    { id: '1234', duration: 2, status: 'Upcoming', startTime: '12:30 PM' },
+    { id: '5678', duration: 5, status: 'Ongoing', startTime: 'Now' }
+  ]);
+
+  const handleSubmit = () => {
+    const newRoom = {
+      id: Math.floor(1000 + Math.random() * 9000).toString(),
+      duration,
+      status: 'Upcoming',
+      startTime: 'Scheduled',
     };
 
-return (
-    <div className="h-screen   bg-gray-200 flex justify-center items-center">
-        <div className="w-1/2  p-6 bg-white rounded-xl shadow-md space-y-6">
-        <h2 className="text-3xl font-semibold text-gray-900  text-center">
-            Room Management
+    setRooms([...rooms, newRoom]);
+    setParagraph('');
+    setShowModal(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 px-4">
+      <div className="w-full max-w-3xl bg-white p-6 rounded-xl shadow-md space-y-6">
+        <h2 className="text-3xl font-semibold text-gray-900 text-center">
+          Room Management
         </h2>
 
         {/* Create Room Section */}
-        <section className="space-y-4">
-            <div className="flex justify-center">
-            <button
-                className="px-6  py-3  bg-gradient-to-r from-gray-900 to-gray-700  text-white rounded-lg  transition font-medium"
-                onClick={() => {setShowModal(true)}}
-            > Create Room
-            </button>
+        <div className="flex justify-center">
+          <button
+            className="px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-lg transition font-medium"
+            onClick={() => setShowModal(true)}
+          >
+            + Create Room
+          </button>
         </div>
+
+        {/* Room List */}
+        <section className="space-y-4">
+          <h3 className="text-xl font-medium text-gray-800 text-center">Available Rooms</h3>
+          {rooms.length === 0 ? (
+            <p className="text-center text-gray-500">No rooms available.</p>
+          ) : (
+            rooms.map((room, idx) => (
+              <div
+                key={idx}
+                className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center"
+              >
+                <div>
+                  <p className="text-lg font-semibold text-gray-700">Room ID: #{room.id}</p>
+                  <p className="text-sm text-gray-600">Duration: {room.duration} min</p>
+                  <p className="text-sm text-gray-600">Status: {room.status}</p>
+                </div>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                  Join
+                </button>
+              </div>
+            ))
+          )}
         </section>
+      </div>
 
-    </div>
-
-      {/* RoomModel */}
-    {showModal && (
+      {/* Room Modal */}
+      {showModal && (
         <RoomModel
-            title="Create Room"
-            onClose={() => { setShowModal(false) }}
-        onSubmit={handleSubmit}
+          title="Create Room"
+          onClose={() => setShowModal(false)}
+          onSubmit={handleSubmit}
         >
-        <div className="flex justify-center mt-4">
-            <DurationChange 
-            duration={duration}
-            setDuration={setDuration}
-            startTime={startTime}
-            showResult={showResult}
-            setShowResult = {setShowResult}
-            setStartTime = {setStartTime}
-    />
-</div>
-        <div>
-            <label className="block text-sm font-medium text-gray-800 ">
-                Paste Paragraph:
+          <div className="flex justify-center mt-4">
+            <DurationChange
+              duration={duration}
+              setDuration={setDuration}
+              startTime={startTime}
+              showResult={showResult}
+              setShowResult={setShowResult}
+              setStartTime={setStartTime}
+            />
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-800">
+              Paste Paragraph:
             </label>
             <textarea
-                value={paragraph}
-                onChange={(e) => setParagraph(e.target.value)}
-                className="w-full h-60 px-4 py-2 rounded-lg border bg-gray-50  text-gray-800  focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows="4"
+              value={paragraph}
+              onChange={(e) => setParagraph(e.target.value)}
+              className="w-full h-40 px-4 py-2 rounded-lg border bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="4"
+              placeholder="Enter the paragraph users will type in the race..."
             ></textarea>
-        </div>
+          </div>
         </RoomModel>
-    )}
+      )}
     </div>
-);
+  );
 };
 
 export default RoomPage;
