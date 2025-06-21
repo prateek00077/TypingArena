@@ -29,8 +29,8 @@ const RoomPage = () => {
 
   return (
 
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 px-4">
-      <div className="w-full max-w-3xl bg-white p-6 rounded-xl shadow-md space-y-6 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-6 px-4">
+      <div className="w-full max-w-3xl bg-white p-4 rounded-xl shadow-md space-y-6 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <h2 className="text-3xl font-semibold text-gray-900 text-center">
           Room Management
         </h2>
@@ -38,7 +38,7 @@ const RoomPage = () => {
         {/* Create Room Section */}
         <div className="flex justify-center">
           <button
-            className="px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-lg transition font-medium"
+            className="px-4 py-2 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-lg transition font-medium"
             onClick={() => setShowModal(true)}
           >
             + Create Room
@@ -46,7 +46,7 @@ const RoomPage = () => {
         </div>
 
         {/* Room List */}
-        <section className="space-y-4">
+          <section className="space-y-4 overflow-y-auto max-h-64 px-2">
           <h3 className="text-xl font-medium text-gray-800 text-center">Available Rooms</h3>
           {rooms.length === 0 ? (
             <p className="text-center text-gray-500">No rooms available.</p>
