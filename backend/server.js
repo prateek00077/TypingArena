@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 import connectDB from './config/db.js';
 import userRouter from './routes/userRoutes.js';
+import resultRouter from './routes/resultRoutes.js';
 // import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/user', userRouter);
+app.use('/api/result', resultRouter);
 
 // app.use(errorHandler);
 
