@@ -3,6 +3,7 @@ import { generateRandomText } from '../utils/textGenerator';
 import { calculateResults } from '../utils/calculateResults.js';   
 import ResultModal from './ResultModel';
 import ClockTimer from './ClockTimer.jsx';
+import TypingArea from './TypingArea';
 
 const TypingBox = () => {
   const [text, setText] = useState('');
@@ -44,36 +45,14 @@ const TypingBox = () => {
     <div className="flex h-screen pt-16 bg-gray-200 overflow-hidden justify-center items-center">
       {/* Left Typing Section - 70% */}
       <div className="w-[90%] flex flex-col items-start justify-center px-8">
-        <div className={`w-full rounded-xl shadow-lg bg-white  p-8 mb-8 ${showResult ? 'opacity-40 pointer-events-none' : ''}`}>
-          <div className="font-mono text-xl leading-relaxed tracking-wide min-h-32 text-gray-900 selection:bg-gray-300  break-words whitespace-pre-wrap">
-            {text.split('').map((char, idx) => {
-              const typedChar = userInput[idx];
-              let color = 'text-gray-800';
-              if (typedChar !== undefined) {
-                color = typedChar === char ? 'text-green-600' : 'text-red-500 ';
-              }
-              return (
-                <span key={idx} className={`transition-colors duration-150 ${color}`}>
-                  {char}
-                </span>
-              );
-            })}
-          </div>
-
-          <input
-            type="text"
-            className={`w-full mt-4 font-mono text-xl rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-400  bg-gray-50  shadow ${showResult ? 'opacity-40 pointer-events-none' : ''}`}
-            value={userInput}
-            onChange={handleChange}
-            placeholder="Start typing here..."
-            autoFocus
-            spellCheck={false}
-            disabled={showResult}
-          />
-        </div>
+        <TypingArea
+          paragraph={text}
+          userInput={userInput}
+          onInputChange={handleChange}
+          disabled={showResult}
+        />
 
         {showResult && (() => {
-          // Calculate time spent in seconds
           const timeSpentSeconds = duration * 60 - timer;
           const { wpm, accuracy, finalScore } = calculateResults(userInput, text, timeSpentSeconds);
           return (
