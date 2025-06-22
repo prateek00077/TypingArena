@@ -21,10 +21,24 @@ export const loginUser = async (req, res) => {
         return res.status(401).send({ message: 'Invalid credentials' });
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 1000 });
-    res.cookie('token', token, { maxAge: 60 * 60 * 1000 });
 
-    res.status(200).send({user});
+    return res.status(200).cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Only secure in production
+        maxAge: 60 * 60 * 1000
+    }).send({user});
 };
+
+export const logoutUser = async (req,res) => {
+    console.log('Cookies received on logout:', req.cookies); // Debug log
+    const {token} = req.cookies;
+
+    if(!token) return res.status(401).send({message : 'Invalid user'});
+
+    return res
+    .clearCookie('token')
+    .send({message : 'User logged out successfully'});
+}
 
 export const getUserProfile = async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');

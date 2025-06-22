@@ -6,6 +6,7 @@ const raceSchema = new mongoose.Schema({
   participants: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      rank: Number,
       username: String,
       wpm: Number,
       accuracy: Number,

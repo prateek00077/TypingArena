@@ -16,27 +16,27 @@ const RoomPage = () => {
   const [rooms, setRooms] = useState([
     { id: '1234', duration: 2, status: 'Upcoming', startTime: '12:30 PM' },
     { id: '5678', duration: 5, status: 'Ongoing', startTime: 'Now' }
-  ]);
+    ]);
 
-  const handleSubmit = () => {
+    const handleSubmit = () => {
     const newRoom = {
-      id: Math.floor(1000 + Math.random() * 9000).toString(),
-      duration,
-      status: 'Upcoming',
-      startTime: 'Scheduled',
+        id: Math.floor(1000 + Math.random() * 9000).toString(),
+        duration,
+        status: 'Upcoming',
+        startTime: 'Scheduled',
     };
 
     setRooms([...rooms, newRoom]);
-    setParagraph('');
+    setParagraph(localParagraph);
     setShowModal(false);
-  };
+    };
 
-  return (
+    return (
 
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-6 px-4">
-      <div className="w-full max-w-3xl bg-white p-4 rounded-xl shadow-md space-y-6 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div className="w-full max-w-3xl bg-white p-4 rounded-xl shadow-md space-y-6 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <h2 className="text-3xl font-semibold text-gray-900 text-center">
-          Room Management
+            Room Management
         </h2>
 
         {/* Create Room Section */}
@@ -50,9 +50,9 @@ const RoomPage = () => {
           <button
             className="px-4 py-2 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-lg transition font-medium"
             onClick={() => setShowModal(true)}
-          >
+        >
             + Create Room
-          </button>
+        </button>
         </div>
 
         {/* Room List */}
@@ -60,56 +60,55 @@ const RoomPage = () => {
           <h3 className="text-xl font-medium text-gray-800 text-center">Available Rooms</h3>
           {rooms.length === 0 ? (
             <p className="text-center text-gray-500">No rooms available.</p>
-          ) : (
+        ) : (
             rooms.map((room, idx) => (
-              <div
+            <div
                 key={idx}
                 className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center"
-              >
+            >
                 <div>
-                  <p className="text-lg font-semibold text-gray-700">Room ID: #{room.id}</p>
-                  <p className="text-sm text-gray-600">Duration: {room.duration} min</p>
-                  <p className="text-sm text-gray-600">Status: {room.status}</p>
+                <p className="text-lg font-semibold text-gray-700">Room ID: #{room.id}</p>
+                <p className="text-sm text-gray-600">Duration: {room.duration} min</p>
+                <p className="text-sm text-gray-600">Status: {room.status}</p>
                 </div>
                 <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-                  Join
+                    Join
                 </button>
-              </div>
+            </div>
             ))
-          )}
+        )}
         </section>
-      </div>
+    </div>
 
       {/* Room Modal */}
-      {showModal && (
+    {showModal && (
         <RoomModel
-          title="Create Room"
-          onClose={() => setShowModal(false)}
-          onSubmit={handleSubmit}
+            onClose={() => setShowModal(false)}
+            onSubmit={handleSubmit}
         >
-          <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-4">
             <DurationChange
-              duration={duration}
-              setDuration={setDuration}
-              startTime={startTime}
-              showResult={showResult}
-              setShowResult={setShowResult}
-              setStartTime={setStartTime}
+                duration={duration}
+                setDuration={setDuration}
+                startTime={startTime}
+                showResult={showResult}
+                setShowResult={setShowResult}
+                setStartTime={setStartTime}
             />
-          </div>
+        </div>
 
-          <div className="mt-4">
+        <div className="mt-4">
             <label className="block text-sm font-medium text-gray-800">
-              Paste Paragraph:
+                Paste Paragraph:
             </label>
             <textarea
-              value={paragraph}
-              onChange={(e) => setParagraph(e.target.value)}
-              className="w-full h-40 px-4 py-2 rounded-lg border bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="4"
-              placeholder="Enter the paragraph users will type in the race..."
+                value={localParagraph}
+                onChange={(e) => setLocalParagraph(e.target.value)}
+                className="w-full h-40 px-4 py-2 rounded-lg border bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows="4"
+                placeholder="Enter the paragraph users will type in the race..."
             ></textarea>
-          </div>
+        </div>
         </RoomModel>
       )}
 
@@ -137,7 +136,7 @@ const RoomPage = () => {
 
 
     </div>
-  );
+);
 };
 
 export default RoomPage;
