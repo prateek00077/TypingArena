@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import RoomModel from './RoomModel';
-import { DurationChange } from './DurationSelect';
 
-const RoomPage = ({setParagraph,setDuration,duration}) => {
-    const [showModal, setShowModal] = useState(false);
-    // const [duration, setDuration] = useState(1);
-    const [startTime, setStartTime] = useState(null);
-    const [showResult, setShowResult] = useState(false);
-    const [localParagraph, setLocalParagraph] = useState('');
-    const [rooms, setRooms] = useState([
+import { DurationChange } from './DurationSelect';
+import JoinRoomModal from './JoinRoomModal';
+
+const RoomPage = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [joinModal, setJoinModal] = useState(false);
+  const [paragraph, setParagraph] = useState('');
+  const [duration, setDuration] = useState(1);
+  const [startTime, setStartTime] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+  const [roomIdInput, setRoomIdInput] = useState(null);
+
+  const [rooms, setRooms] = useState([
     { id: '1234', duration: 2, status: 'Upcoming', startTime: '12:30 PM' },
     { id: '5678', duration: 5, status: 'Ongoing', startTime: 'Now' }
     ]);
@@ -35,8 +40,14 @@ const RoomPage = ({setParagraph,setDuration,duration}) => {
         </h2>
 
         {/* Create Room Section */}
-        <div className="flex justify-center">
-        <button
+        <div className="flex justify-center gap-4">
+          <button
+            className="px-4 py-2 bg-white  border-2 border-gray-700  font-medium rounded-lg"
+            onClick={() => setJoinModal(true)}
+          >
+            Join Room
+          </button>
+          <button
             className="px-4 py-2 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-lg transition font-medium"
             onClick={() => setShowModal(true)}
         >
@@ -46,8 +57,8 @@ const RoomPage = ({setParagraph,setDuration,duration}) => {
 
         {/* Room List */}
         <section className="space-y-4 overflow-y-auto max-h-64 px-2">
-        <h3 className="text-xl font-medium text-gray-800 text-center">Available Rooms</h3>
-        {rooms.length === 0 ? (
+          <h3 className="text-xl font-medium text-gray-800 text-center">Available Rooms</h3>
+          {rooms.length === 0 ? (
             <p className="text-center text-gray-500">No rooms available.</p>
         ) : (
             rooms.map((room, idx) => (
@@ -99,7 +110,31 @@ const RoomPage = ({setParagraph,setDuration,duration}) => {
             ></textarea>
         </div>
         </RoomModel>
-    )}
+      )}
+
+      {/* Join Modal hai ye  */}
+      {joinModal && (
+        <JoinRoomModal
+          onClose={() => {
+            setJoinModal(false);
+            setRoomIdInput('');
+          }}
+          value={roomIdInput}
+          onChange={(e) => setRoomIdInput(e.target.value)}
+          onSubmit={() => {
+            const found = rooms.find((room) => room.id === roomIdInput); // yha jo rooms.find hai ye backend se ayega 
+            if (found) {
+              alert(`Joining Room ID: ${found.id}`);
+              // Navigate to room or load room content here
+              setJoinModal(false); // page nhi dikhga fir join wala
+            } else {
+              alert('Room ID not found!');
+            }
+          }}
+        />
+      )}
+
+
     </div>
 );
 };
