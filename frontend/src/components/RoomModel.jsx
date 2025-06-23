@@ -18,7 +18,7 @@ return (
             className="px-6 py-2 text-white rounded-lg bg-gradient-to-r from-gray-900 to-gray-700 transition font-medium"
             onClick={onSubmit}
         >
-            <Link to="/typeRoom" >Go To Room</Link> 
+            <Link to="/typeRoom" >Create Room</Link> 
         </button>
         </div>
     </div>

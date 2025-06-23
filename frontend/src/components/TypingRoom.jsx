@@ -10,6 +10,8 @@ const BoardData = [
     { name: 'User1', wpm: 75, rank: 1 },
     { name: 'User2', wpm: 68, rank: 2 },
     { name: 'You', wpm: 66, rank: 3 },
+    { name: 'User2', wpm: 68, rank: 2 },
+    { name: 'You', wpm: 66, rank: 3 },
 ];
 
 const TypingRoom = ({ paragraph, duration }) => {
