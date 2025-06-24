@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import RoomModel from './RoomModel';
-
+import { Link } from 'react-router';
 import { DurationChange } from './DurationSelect';
 import JoinRoomModal from './JoinRoomModal';
 
-const RoomPage = () => {
+const RoomPage = ({setParagraph ,duration,setDuration}) => {
   const [showModal, setShowModal] = useState(false);
   const [joinModal, setJoinModal] = useState(false);
-  const [paragraph, setParagraph] = useState('');
-  const [duration, setDuration] = useState(1);
+  const [localParagraph, setLocalParagraph] = useState(''); 
   const [startTime, setStartTime] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [roomIdInput, setRoomIdInput] = useState(null);
@@ -72,7 +71,7 @@ const RoomPage = () => {
                 <p className="text-sm text-gray-600">Status: {room.status}</p>
                 </div>
                 <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-                    Join
+                    <Link to="/typeRoom" >Join</Link> 
                 </button>
             </div>
             ))
