@@ -4,11 +4,11 @@
 3. start a room if host
 4. Finish a room if host
 5. Leave a room
+6. Get the room details
  */
 import Room from '../models/roomModel.js';
 
 // Create a new room
-
 export const createRoom = async (req, res) => {
     const userId = req.user?._id;
     const { paragraph, duration } = req.body;
@@ -145,3 +145,19 @@ export const leaveRoom = async (req, res) => {
     await room.save();
     return res.status(200).json({ message: "Left the room successfully", room });
 };
+
+// get the room deatails
+export const getRoomDetails = async (req,res) => {
+    const roomId = req.body.room?._id;
+
+    if(!roomId) return res.status(400).json({message : "Invalid roomId"});
+
+    const room = await Room.findById(roomId);
+
+    if(!room) return res.status(404).json({message : "Room does not exist"});
+
+    return res.status(200).json({
+        room,
+        message : "Room details fetched successfully"
+    })
+}
