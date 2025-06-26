@@ -35,7 +35,7 @@ export const createRoom = async (req, res) => {
 // join a room
 export const joinRoom = async (req, res) => {
     const user = req.user;
-    const roomId = req.body.room?._id;
+    const roomId = req.body.roomId;
 
     if (!user) return res.status(401).json({ message: "Please login to join the room" });
     if (!roomId) return res.status(400).json({ message: "Invalid room credentials" });
@@ -68,7 +68,7 @@ export const joinRoom = async (req, res) => {
 // Start a room (host only)
 export const startRoom = async (req, res) => {
     const userId = req.user?._id;
-    const roomId = req.body.room?._id;
+    const roomId = req.body.roomId;
 
     if (!userId) return res.status(401).json({ message: "User not found, please login" });
     if (!roomId) return res.status(400).json({ message: "Invalid room" });
@@ -94,7 +94,7 @@ export const startRoom = async (req, res) => {
 // Finish a room (host or time over)
 export const finishRoom = async (req, res) => {
     const userId = req.user?._id;
-    const roomId = req.body.room?._id;
+    const roomId = req.body.roomId;
 
     if (!userId) return res.status(401).json({ message: "User not found, please login" });
     if (!roomId) return res.status(400).json({ message: "Invalid room" });
@@ -129,7 +129,7 @@ export const finishRoom = async (req, res) => {
 // Leave a room
 export const leaveRoom = async (req, res) => {
     const userId = req.user?._id;
-    const roomId = req.body.room?._id;
+    const roomId = req.body.roomId;
 
     if (!userId) return res.status(401).json({ message: "User not found, please login" });
     if (!roomId) return res.status(400).json({ message: "Invalid room" });
@@ -148,7 +148,7 @@ export const leaveRoom = async (req, res) => {
 
 // get the room deatails
 export const getRoomDetails = async (req,res) => {
-    const roomId = req.body.room?._id;
+    const roomId = req.body.roomId;
 
     if(!roomId) return res.status(400).json({message : "Invalid roomId"});
 

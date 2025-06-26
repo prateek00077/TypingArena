@@ -9,7 +9,7 @@ roomRouter.post('/create',createRoom);
 roomRouter.post('/join',joinRoom);
 roomRouter.post('/start',startRoom);
 roomRouter.post('/finish',finishRoom);
-roomRouter.post('/leave',leaveRoom);
+roomRouter.delete('/leave',leaveRoom);
 roomRouter.get('/get',getRoomDetails);
 
 export default roomRouter;
