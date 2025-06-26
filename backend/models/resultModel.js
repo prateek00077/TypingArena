@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const resultSchema = new mongoose.Schema({
   userId : { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
-  raceId : {type: mongoose.Schema.Types.ObjectId, ref: 'Race', default: null},
+  roomId : {type: mongoose.Schema.Types.ObjectId, ref: 'Race', default: null},
   wpm: Number,
   accuracy: Number,
   charsTyped: Number,
