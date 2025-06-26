@@ -11,7 +11,7 @@ export const createResult = async(req,res)=>{
     }
 
     const result = await Result.create({
-        user : userId,
+        userId,
         wpm,
         accuracy,
         charsTyped,
@@ -29,7 +29,7 @@ export const getResults = async(req,res)=>{
 
     if(!userId) return res.status(401).send({message: "Invalid user"});
 
-    const results = await Result.find({user: userId});
+    const results = await Result.find({userId});
 
     if(results.length === 0) return res.status(400).send({message : "No results found"});
 
