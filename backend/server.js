@@ -8,6 +8,7 @@ import connectDB from './config/db.js';
 import userRouter from './routes/userRoutes.js';
 import resultRouter from './routes/resultRoutes.js';
 import roomRouter from './routes/roomRoutes.js';
+import roomSocketHandler from './sockets/roomScoketHandler.js';
 // import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
@@ -26,12 +27,14 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
+io.on('connection', (socket) => {
+  roomSocketHandler(io, socket); // handle socket logic
+});
+
 // Routes
 app.use('/api/user', userRouter);
 app.use('/api/result', resultRouter);
 app.use('/api/room', roomRouter);
-
-// app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
