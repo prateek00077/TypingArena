@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import RoomModel from './RoomModel';
+import RoomModel from '../components/RoomModel';
 import { Link } from 'react-router';
-import { DurationChange } from './DurationSelect';
-import JoinRoomModal from './JoinRoomModal';
+import { DurationChange } from '../components/DurationSelect';
+import JoinRoomModal from '../components/JoinRoomModal';
 
 const RoomPage = ({setParagraph ,duration,setDuration}) => {
   const [showModal, setShowModal] = useState(false);

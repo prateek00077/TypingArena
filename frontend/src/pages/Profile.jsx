@@ -1,49 +1,94 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
-import { FaUserCircle, FaKeyboard, FaChartLine, FaCheckCircle, FaEdit } from 'react-icons/fa';
 
 const Profile = () => {
   const { userStats } = useAppContext();
+  const {
+    username,
+    email,
+    avatar,
+    wpm,
+    accuracy,
+    totalCharactersTyped,
+    raceAttended,
+    joinedDate,
+  } = userStats;
 
   return (
-    <div className="min-h-screen pt-24 bg-gradient-to-r from-gray-100 to-green-100 px-4">
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8">
-        {/* Profile Header */}
-        <div className="flex items-center space-x-4">
-          <FaUserCircle className="text-green-600 text-6xl" />
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">{userStats.username}</h2>
-            <p className="text-gray-500">{userStats.email}</p>
+    <div
+      className="w-full h-screen flex items-center justify-center m-0 bg-gray-200 px-2 pt-20 pb-4"
+      style={{ boxSizing: 'border-box' }}
+    >
+      <div className="w-full max-w-md flex flex-col space-y-4">
+        {/* Header */}
+        <div className="flex items-center justify-center">
+          <h1 className="text-gray-800 text-3xl font-bold">Your Impact Summary</h1>
+        </div>
+        <div className="flex flex-col items-center space-y-1">
+  {avatar ? 
+  (
+    <img
+      src={avatar}
+      alt={username}
+      className="w-16 h-16 rounded-full border-2 border-gray-800 shadow object-cover"
+    />
+  ) :
+  (
+    <div className="w-16 h-16 rounded-full border-2 border-gray-800 shadow bg-gray-400 flex items-center justify-center text-white text-xl font-bold">
+      {username?.charAt(0).toUpperCase()}
+    </div>
+  )
+  }
+  
+  <div className="text-center">
+    <h2 className="text-lg font-bold text-gray-900">{username}</h2>
+    <p className="text-xs text-gray-600">{email}</p>
+  </div>
+</div>
+
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-2 text-xs text-gray-800 bg-gray-50 rounded-lg p-2">
+          <div className="flex flex-col items-center">
+            <span className="font-medium">WPM</span>
+            <span>{wpm}</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="font-medium">Accuracy</span>
+            <span>{accuracy}%</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="font-medium">Characters</span>
+            <span>{totalCharactersTyped}</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="font-medium">Races</span>
+            <span>{raceAttended}</span>
+          </div>
+          <div className="flex flex-col items-center col-span-2">
+            <span className="font-medium">Joined</span>
+            <span>{joinedDate}</span>
           </div>
         </div>
 
-        {/* Stats Section */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
-          <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg shadow-sm">
-            <FaChartLine className="text-green-500 text-xl" />
-            <span><strong>WPM:</strong> {userStats.wpm}</span>
-          </div>
-          <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg shadow-sm">
-            <FaCheckCircle className="text-green-500 text-xl" />
-            <span><strong>Accuracy:</strong> {userStats.accuracy}%</span>
-          </div>
-          <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg shadow-sm">
-            <FaKeyboard className="text-green-500 text-xl" />
-            <span><strong>Total Characters:</strong> {userStats.totalCharactersTyped}</span>
-          </div>
-          <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg shadow-sm">
-            <FaKeyboard className="text-green-500 text-xl" />
-            <span><strong>Races Attended:</strong> {userStats.raceAttended}</span>
-          </div>
-        </div>
-
-        {/* Edit Button */}
-        {/* <div className="mt-6 text-right">
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
-            <FaEdit />
-            <span>Edit Profile</span>
+        {/* Action Buttons */}
+        <div className="space-y-1 mb-2">
+          <button className="w-full py-1 text-xs rounded-lg border border-gray-500 text-gray-800 hover:bg-gray-50 transition">
+            Edit Profile
           </button>
-        </div> */}
+          <button className="w-full py-1 text-xs rounded-lg border border-gray-500 text-gray-800 hover:bg-gray-50 transition">
+            Change Password
+          </button>
+          <button className="w-full py-1 text-xs rounded-lg border border-gray-500 text-gray-800 hover:bg-gray-50 transition">
+            Reset Stats
+          </button>
+          <button className="w-full py-1 text-xs rounded-lg border border-gray-500 text-gray-800 hover:bg-gray-50 transition">
+            Logout
+          </button>
+          <button className="w-full py-1 text-xs rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition">
+            Delete Account
+          </button>
+        </div>
       </div>
     </div>
   );

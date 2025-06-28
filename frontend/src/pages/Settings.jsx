@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DarkModeToggle from './DarkMode';
+import DarkModeToggle from '../components/DarkMode';
 
 const Settings = () => {
 const [notificationsEnabled, setNotificationsEnabled] = useState(true);

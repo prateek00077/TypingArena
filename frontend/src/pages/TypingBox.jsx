@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { generateRandomText } from '../utils/textGenerator';
+import { generateRandomText } from '../utils/textGenerator.js';
 import { calculateResults } from '../utils/calculateResults.js';   
-import ResultModal from './ResultModel';
-import ClockTimer from './ClockTimer.jsx';
-import TypingArea from './TypingArea';
+import ResultModal from '../components/ResultModel.jsx';
+import ClockTimer from '../components/ClockTimer.jsx';
+import TypingArea from '../components/TypingArea.jsx';
 
 const TypingBox = () => {
   const [text, setText] = useState('');
