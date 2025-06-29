@@ -4,7 +4,7 @@ const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
 const [userStats, setUserStats] = useState({
-    username: 'Gopa Bahumik',
+    username: '',
     email: 'Bahumik@example.com',
     wpm: 72,
     accuracy: 94,
