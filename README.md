@@ -1,6 +1,6 @@
 # 🧠 TypingArena
 
-**TypingArena** is a real-time multiplayer typing test web application where users can join custom rooms, compete with others by typing the same paragraph, and view a live leaderboard to track typing speed (WPM). It’s perfect for improving typing skills while having fun!
+**TypingArena** is a real-time multiplayer typing test web application where users can join or create custom rooms, compete with others by typing the same paragraph, and view a live leaderboard to track typing speed (WPM). It’s perfect for improving typing skills while having fun!
 
 ---
 
@@ -33,5 +33,5 @@
 
 ### 📁 Clone the Project
 ```bash
-git clone https://github.com/yourusername/typingArena.git
+git clone https://github.com/prateek00077/typingArena.git
 cd typingArena
