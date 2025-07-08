@@ -15,8 +15,16 @@ export const registerUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const { username, email, password } = req.body;
+
+    // Find user by username OR email
+    const user = await User.findOne({
+        $or: [
+            { username: username || null },
+            { email: email || null }
+        ]
+    });
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).send({ message: 'Invalid credentials' });
     }
@@ -26,7 +34,7 @@ export const loginUser = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // Only secure in production
         maxAge: 60 * 60 * 1000
-    }).send({user});
+    }).send({ user });
 };
 
 export const logoutUser = async (req,res) => {
