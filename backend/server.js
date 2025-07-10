@@ -12,18 +12,23 @@ import roomSocketHandler from './sockets/roomScoketHandler.js';
 // import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
-connectDB(); 
+connectDB();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST'],
+    credentials: true
   },
 });
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 

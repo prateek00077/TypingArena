@@ -5,18 +5,19 @@ import Profile from './components/Profile';
 import Settings from './components/Settings';
 import RoomPage from './components/Roompage';
 import TypingRoom from './components/TypingRoom';
-import { AppContextProvider } from './context/AppContext';
+// import { AppContextProvider } from './context/AppContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import SignUp from './pages/Signup';
 import Login from './pages/Login';
 
 import { useState } from 'react';
+import { AppProvider } from './context/AppContext';
 
 const AppContent = () => {
   const location = useLocation();
   const hideHeader = location.pathname === '/login' || location.pathname === '/register';
   const [paragraph, setParagraph] = useState('');
-  const [duration, setDuration] = useState(1);
+  const [duration, setDuration] = useState(1);  
 
   return (
     <div className="text-green-900">
@@ -39,11 +40,9 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <AppContextProvider>
-      <Router>
+    <AppProvider>
         <AppContent />
-      </Router>
-    </AppContextProvider>
+    </AppProvider>
   );
 };
 

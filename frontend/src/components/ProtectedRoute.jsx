@@ -3,12 +3,18 @@ import { Navigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 
 const ProtectedRoute = ({ children }) => {
-    const { userStats } = useAppContext();
+  const { user, loading } = useAppContext();
 
-    if (!userStats || !userStats.username) {
-        alert("Please login First");
-        return <Navigate to="/login" replace />;
-    }
+  if (loading) return <div>Loading...</div>;
+
+  // if (!user || !user.username) {
+  //     alert("Please login First");
+  //     return <Navigate to="/login" replace />;
+  // }
+
+  if (!user) {
+    return <Login />;
+  }
 
   return children;
 };

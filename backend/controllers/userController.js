@@ -11,7 +11,13 @@ export const registerUser = async (req, res) => {
     const user = await User.create({ username, email, password: hashed });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.status(201).send({ user, token });
+    res.status(201).cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    }).send({ user });
+
 };
 
 export const loginUser = async (req, res) => {
@@ -28,7 +34,8 @@ export const loginUser = async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).send({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 1000 });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
 
     return res.status(200).cookie('token', token, {
         httpOnly: true,
@@ -37,15 +44,15 @@ export const loginUser = async (req, res) => {
     }).send({ user });
 };
 
-export const logoutUser = async (req,res) => {
+export const logoutUser = async (req, res) => {
     console.log('Cookies received on logout:', req.cookies); // Debug log
-    const {token} = req.cookies;
+    const { token } = req.cookies;
 
-    if(!token) return res.status(401).send({message : 'Invalid user'});
+    if (!token) return res.status(401).send({ message: 'Invalid user' });
 
     return res
-    .clearCookie('token')
-    .send({message : 'User logged out successfully'});
+        .clearCookie('token')
+        .send({ message: 'User logged out successfully' });
 }
 
 export const getUserProfile = async (req, res) => {

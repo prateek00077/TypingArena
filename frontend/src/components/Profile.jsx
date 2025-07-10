@@ -2,7 +2,7 @@ import React from 'react';
 import { useAppContext } from '../context/AppContext';
 
 const Profile = () => {
-  const { userStats } = useAppContext();
+  const { user,logout } = useAppContext();
   const {
     username,
     email,
@@ -12,7 +12,7 @@ const Profile = () => {
     totalCharactersTyped,
     raceAttended,
     joinedDate,
-  } = userStats;
+  } = user;
 
   return (
     <div
@@ -82,7 +82,7 @@ const Profile = () => {
           <button className="w-full py-1 text-xs rounded-lg border border-gray-500 text-gray-800 hover:bg-gray-50 transition">
             Reset Stats
           </button>
-          <button className="w-full py-1 text-xs rounded-lg border border-gray-500 text-gray-800 hover:bg-gray-50 transition">
+          <button onClick={logout} className="w-full py-1 text-xs rounded-lg border border-gray-500 text-gray-800 hover:bg-gray-50 transition">
             Logout
           </button>
           <button className="w-full py-1 text-xs rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition">
