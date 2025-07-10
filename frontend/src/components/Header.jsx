@@ -33,7 +33,7 @@ const Header = () => {
 
 
             <div onClick={handleProfileClick} className="hover:text-indigo-300 cursor-pointer transition-colors">
-              Profile
+             {user ? user.username : "Login"}
             </div>
 
             <Link to="/room" className="hover:text-indigo-300 transition-colors">Room</Link>
