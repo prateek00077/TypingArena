@@ -5,7 +5,7 @@ import Profile from './components/Profile';
 import Settings from './components/Settings';
 import RoomPage from './components/Roompage';
 import TypingRoom from './components/TypingRoom';
-import { AppContextProvider } from './context/AppContext';
+import { AppProvider } from './context/AppContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import SignUp from './pages/Signup';
 import Login from './pages/Login';
@@ -39,11 +39,11 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <AppContextProvider>
+    <AppProvider>
       <Router>
         <AppContent />
       </Router>
-    </AppContextProvider>
+    </AppProvider>
   );
 };
 
