@@ -1,6 +1,3 @@
-
-
-
 import React, { useState } from 'react';
 import DarkModeToggle from './DarkMode';
 import { Link } from 'react-router';
