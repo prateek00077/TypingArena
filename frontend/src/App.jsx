@@ -7,8 +7,8 @@ import Profile from './components/Profile';
 import Settings from './components/Settings';
 import RoomPage from './components/Roompage';
 import TypingRoom from './components/TypingRoom';
-// import { AppContextProvider } from './context/AppContext';
-// import ProtectedRoute from './components/ProtectedRoute';
+import { AppProvider } from './context/AppContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import SignUp from './pages/Signup';
 import Login from './pages/Login';
 
@@ -43,8 +43,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <AppProvider>
-      <AppContent />
-      <ToastContainer position="bottom-right" autoClose={2000} />
+      <Router>
+        <AppContent />
+      </Router>
     </AppProvider>
   );
 };
