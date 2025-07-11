@@ -1,6 +1,6 @@
 import React from 'react';
-import DarkModeToggle from './DarkMode'; // Import your Dark Mode component
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router';
+import DarkModeToggle from './DarkMode';
 const Header = () => {
   return (
     <header className="fixed top-0 w-full z-50 bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg">
@@ -19,7 +19,7 @@ const Header = () => {
             <Link to="/room" className="hover:text-indigo-300 transition-colors">Room</Link>
             <Link to="/settings" className="hover:text-indigo-300 transition-colors">Settings</Link>
             {/* Dark Mode Toggle */}
-            <DarkModeToggle /> {/* Use your Dark Mode component here */}
+            <DarkModeToggle /> 
           </nav>
         </div>
       </div>

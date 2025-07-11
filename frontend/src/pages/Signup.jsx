@@ -1,23 +1,26 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { useAppContext } from "../context/AppContext";
 
 const SignUp = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { register , loading, error} = useAppContext();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            // await signupUser(username, email, password);
-            navigate("/login");
-        } catch (error) {
-            console.error("Signup failed:", error);
-            alert("Signup failed. Please try again.");
-        }
-    };
+    try {
+    const res = await register(username, email, password);
+    if (res?.user) {
+    navigate("/");
+    }
+    } catch (error) {
+    console.error("Signup failed:", error);
+    }
+};
+
 
     return (
         <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4">
@@ -28,10 +31,15 @@ const SignUp = () => {
                     <div className="mb-4 text-center">
                         <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
                     </div>
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-center">
+                            {error}
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                                User Name
+                                Username
                             </label>
                             <input
                                 id="username"
@@ -76,9 +84,11 @@ const SignUp = () => {
 
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition"
+                            disabled={loading}
+                            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition ${loading ? "opacity-70 cursor-not-allowed" : ""
+                                }`}
                         >
-                            Create Account
+                            {loading ? "Creating account..." : "Create Account"}
                         </button>
 
                         <p className="text-center text-sm text-gray-600">
