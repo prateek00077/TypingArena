@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
-
+import { toast } from "react-toastify";
 // Create the context
 const AppContext = createContext();
 
@@ -46,11 +46,13 @@ export const AppProvider = ({ children }) => {
         email, password
       })
       // console.log("login hai", data);
+      toast.success(`Welcome back, ${data.user.username}`);
       setUser(data.user)
       return data;
     } catch (err) {
-      console.error("Axios error:", err);
-      console.error("Error response data:", err.response?.data);
+      // console.error("Axios error:", err);
+      // console.error("Error response data:", err.response?.data);
+      toast.error(message);
       setError(err.response?.data?.message || "Login failed");
       throw err;
     } finally {
@@ -65,9 +67,12 @@ export const AppProvider = ({ children }) => {
     try {
       const { data } = await api.post("/register", { username, email, password });
       setUser(data.user);
+      toast.success("Register successfully");
+
       return data;
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
+      toast.error(message);
       throw err;
     } finally {
       setLoading(false);
@@ -80,6 +85,7 @@ export const AppProvider = ({ children }) => {
     try {
       await api.post("/logout");
       setUser(null);
+      toast.info("You have been logged out.");
       navigate("/")
     } catch (err) {
       setError(err.response?.data?.message || "Logout failed");

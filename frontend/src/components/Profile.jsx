@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
+import { useNavigate } from 'react-router';
 
 const Profile = () => {
-  const { user,logout } = useAppContext();
+  const { user, logout } = useAppContext();
+  const navigate = useNavigate(); 
+  useEffect(() => {
+    if (!user) {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
+
+  if (!user) return null; 
+
+
+
   const {
     username,
     email,
@@ -25,26 +37,26 @@ const Profile = () => {
           <h1 className="text-gray-800 text-3xl font-bold">Your Impact Summary</h1>
         </div>
         <div className="flex flex-col items-center space-y-1">
-  {avatar ? 
-  (
-    <img
-      src={avatar}
-      alt={username}
-      className="w-16 h-16 rounded-full border-2 border-gray-800 shadow object-cover"
-    />
-  ) :
-  (
-    <div className="w-16 h-16 rounded-full border-2 border-gray-800 shadow bg-gray-400 flex items-center justify-center text-white text-xl font-bold">
-      {username?.charAt(0).toUpperCase()}
-    </div>
-  )
-  }
-  
-  <div className="text-center">
-    <h2 className="text-lg font-bold text-gray-900">{username}</h2>
-    <p className="text-xs text-gray-600">{email}</p>
-  </div>
-</div>
+          {avatar ?
+            (
+              <img
+                src={avatar}
+                alt={username}
+                className="w-16 h-16 rounded-full border-2 border-gray-800 shadow object-cover"
+              />
+            ) :
+            (
+              <div className="w-16 h-16 rounded-full border-2 border-gray-800 shadow bg-gray-400 flex items-center justify-center text-white text-xl font-bold">
+                {username?.charAt(0).toUpperCase()}
+              </div>
+            )
+          }
+
+          <div className="text-center">
+            <h2 className="text-lg font-bold text-gray-900">{username}</h2>
+            <p className="text-xs text-gray-600">{email}</p>
+          </div>
+        </div>
 
 
         {/* Stats */}

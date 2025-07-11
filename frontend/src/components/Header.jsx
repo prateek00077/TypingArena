@@ -13,6 +13,13 @@ const Header = () => {
       navigate("/login");
     }
   };
+  const handleRoomClick = () => {
+    if (user) {
+      navigate("/room");
+    } else {
+      navigate("/login");
+    }
+  };
 
 
   return (
@@ -36,7 +43,13 @@ const Header = () => {
              {user ? user.username : "Login"}
             </div>
 
-            <Link to="/room" className="hover:text-indigo-300 transition-colors">Room</Link>
+            {/* <Link to="/room" className="hover:text-indigo-300 transition-colors">Room</Link> */}
+
+            <div onClick={handleRoomClick} className="hover:text-indigo-300 cursor-pointer transition-colors">
+            Room
+            </div>
+
+            
             <Link to="/settings" className="hover:text-indigo-300 transition-colors">Settings</Link>
             {/* Dark Mode Toggle */}
             <DarkModeToggle /> {/* Use your Dark Mode component here */}
