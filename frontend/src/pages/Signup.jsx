@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
 
 
 const SignUp = () => {
@@ -7,11 +8,13 @@ const SignUp = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const {register} = useAppContext();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             // await signupUser(username, email, password);
+            const response = await register(username, email, password);
             navigate("/login");
         } catch (error) {
             console.error("Signup failed:", error);
