@@ -1,5 +1,19 @@
-const ResultModal = ({ wpm, accuracy, finalScore, onRestart }) => (
+import React, { useEffect } from "react";
+import { useResultContext } from "../context/ResultContext";
+const ResultModal = ({ wpm, accuracy, finalScore, onRestart }) => {
+    const { createResult } = useResultContext();
+    const hasSaved = React.useRef(false);
 
+    useEffect(() => {
+    if (!hasSaved.current) {
+        hasSaved.current = true;
+        const date = new Date().toISOString();
+        const charsTyped = finalScore;
+
+        createResult({ wpm, accuracy, charsTyped, date });
+    }
+    }, []);
+    return(
     <div className="fixed inset-0 flex items-center mt-[55px] justify-center bg-black bg-opacity-80 z-50">
     <div className="bg-gray-200 rounded-2xl shadow-2xl px-12 py-10 text-center min-w-[350px] min-h-[260px] max-w-[90vw] max-h-[90vh] flex flex-col justify-center">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">Congratulations Test Complete!</h2>
@@ -26,6 +40,7 @@ const ResultModal = ({ wpm, accuracy, finalScore, onRestart }) => (
     </button>
     </div>
 </div>
-);
+)
+};
 
 export default ResultModal;

@@ -3,19 +3,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 const Login = () => {
     const navigate = useNavigate();
-    const { setUserStats } = useAppContext();
+    const { login ,loading,error} = useAppContext();
     const [usernameOrEmail, setUsernameOrEmail] = useState("");
     const [password, setPassword] = useState("");
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // const userData = await loginUser(email, password);
-            // setUserStats(userData);
+        const result = await login(usernameOrEmail, password); 
+        if (result?.user) {
             navigate("/");
-        } catch (error) {
-            console.error("Login failed:", error);
-            alert("Login failed. Please try again.");
+        }
+        }
+        catch (error) {
+        console.error("Login failed:", error);
         }
     };
 
@@ -26,6 +27,11 @@ const Login = () => {
                 {/* Left Side: Form */}
                 <div className="w-full lg:w-1/2 p-8 md:p-16">
                     <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Welcome Back 👋</h2>
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-center">
+                            {error}
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -60,9 +66,12 @@ const Login = () => {
 
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition"
+                            disabled={loading}
+                            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition ${
+                                loading ? "opacity-70 cursor-not-allowed" : ""
+                            }`}
                         >
-                            Login
+                            {loading ? "Logging in..." : "Login"}
                         </button>
 
                         <p className="text-center text-sm text-gray-600">
