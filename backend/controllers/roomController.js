@@ -161,3 +161,17 @@ export const getRoomDetails = async (req,res) => {
         message : "Room details fetched successfully"
     })
 }
+
+//get all the rooms
+export const getAllRooms = async (req, res) => {
+    const userId = req.user._id;
+
+    if(!userId) return res.status(401).json({message : "user not found "});
+
+    const rooms = await Room.find({host : userId});
+
+    return res.status(200).json({
+        rooms,
+        message : "Rooms fetched successfully"
+    })
+}
