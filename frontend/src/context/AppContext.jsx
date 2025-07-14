@@ -27,7 +27,7 @@ export const AppProvider = ({ children }) => {
     const fetchProfile = async () => {
       try {
         const { data } = await api.get("/user/profile");
-        setUser(data.user);
+        setUser(data);
       } catch {
         setUser(null);
       } finally {
@@ -39,6 +39,8 @@ export const AppProvider = ({ children }) => {
 
   // Login
   const login = async (usernameOrEmail, password) => {
+    setLoading(true)
+    setError(null)
     try {
       const { data } = await api.post("/user/login", { username:usernameOrEmail, email:usernameOrEmail , password, });
       setUser(data.user);
@@ -48,6 +50,9 @@ export const AppProvider = ({ children }) => {
       console.error("Error response data:", err.response?.data);
       setError(err.response?.data?.message || "Login failed");
     }
+    finally {
+    setLoading(false);
+  }
   };
 
   // Register

@@ -15,7 +15,7 @@ export const registerUser = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 100,
+        maxAge: 7* 24 * 60 * 60 * 1000,
     }).send({ user });
 };
 
@@ -33,13 +33,13 @@ export const loginUser = async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).send({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 1000 });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     return res.status(200).cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // Only secure in production
         sameSite: 'lax',
-        maxAge: 60 * 60 * 1000
+        maxAge: 7 * 24 * 60 * 60 * 1000
     }).send({ user });
 };
 
