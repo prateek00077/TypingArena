@@ -20,7 +20,7 @@ return (
         >
             Create Room
         </button>
-        </div>
+        </div>  
     </div>
     </div>
 );

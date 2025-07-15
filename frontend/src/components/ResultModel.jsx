@@ -3,7 +3,7 @@ import { useResultContext } from "../context/ResultContext";
 const ResultModal = ({ wpm, accuracy, finalScore, onRestart }) => {
     const { createResult } = useResultContext();
     const hasSaved = React.useRef(false);
-
+    
     useEffect(() => {
     if (!hasSaved.current) {
         hasSaved.current = true;

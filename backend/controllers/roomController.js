@@ -36,7 +36,7 @@ export const createRoom = async (req, res) => {
 export const joinRoom = async (req, res) => {
     const user = req.user;
     const roomId = req.body.roomId;
-
+    
     if (!user) return res.status(401).json({ message: "Please login to join the room" });
     if (!roomId) return res.status(400).json({ message: "Invalid room credentials" });
 
