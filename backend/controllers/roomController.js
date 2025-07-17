@@ -43,9 +43,9 @@ export const joinRoom = async (req, res) => {
     const room = await Room.findById(roomId);
     if (!room) return res.status(404).json({ message: "Room does not exist" });
 
-    // Only allow join if status is pending or running
-    if (room.status !== "pending" && room.status !== "running") {
-        return res.status(400).json({ message: "This room is already finished" });
+    // Only allow join if status is pending
+    if (room.status !== "pending") {
+        return res.status(400).json({ message: "This room has started or is already finished" });
     }
 
     // Prevent duplicate join
@@ -174,4 +174,26 @@ export const getAllRooms = async (req, res) => {
         rooms,
         message : "Rooms fetched successfully"
     })
+}
+
+//delete a room
+export const deleteRoom = async (req, res) => {
+    const userId = req.user._id;
+
+    if(!userId) return res.status(400).json({message : "invalid user"});
+
+    const roomId = req.body.roomId;
+
+    if(!roomId) return res.status(400).json({message : "innvalid room"});
+
+    const room = await Room.findOne({host : userId, _id : roomId});
+    if(!room) res.status(404).json({ message : 'Room not found'});
+
+    try {
+        await Room.deleteOne({host : userId, _id : roomId});
+        res.status(200).json({ message : "Room deleted successfully"});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message : "Internal Server Error"});
+    }
 }
