@@ -5,11 +5,13 @@ import { DurationChange } from './DurationSelect';
 import JoinRoomModal from './JoinRoomModal';
 import { useRoomContext } from '../context/RoomContext';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/AppContext';
 const RoomPage = ({ setParagraph, duration, setDuration }) => {
   const [showModal, setShowModal] = useState(false);
   const [joinModal, setJoinModal] = useState(false);
   const [localParagraph, setLocalParagraph] = useState('');
   const [roomIdInput, setRoomIdInput] = useState('');
+  const {user } = useAppContext();
   const navigate = useNavigate();
 
   const {
@@ -23,6 +25,7 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
     getRoomDetails,
     setRoom,
     getAllRooms,
+    deleteRoom,
   } = useRoomContext();
 
   const handleCreateRoom = async () => {
@@ -60,6 +63,20 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
     alert("Failed to join room. Room may not exist.");
   }
 };
+  const handleDeleteRoom = async (roomId) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this room?");
+  if (!confirmDelete) return;
+
+  try {
+    await deleteRoom(roomId);
+    const updatedRooms = await getAllRooms();
+    setRooms(updatedRooms); // refresh after delete
+  } catch (error) {
+    console.error("Error deleting room:", error);
+    alert("Failed to delete room");
+  }
+  };
+
 
   const [rooms, setRooms] = useState([]);
 
@@ -109,27 +126,59 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
           {rooms.length === 0 ? (
             <p className="text-center text-gray-500">No rooms available.</p>
           ) : (
-            rooms.map((room, idx) => (
-              <div
-                key={idx}
-                className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center"
-              >
-                <div>
-                  <p className="text-lg font-semibold text-gray-700">Room ID: #{room._id}</p>
-                  <p className="text-sm text-gray-600">Duration: {room.duration} min</p>
-                  <p className="text-sm text-gray-600">Status: {room.status}</p>
-                </div>
-                  <button
-        className={`px-4 py-2 rounded transition ${
-          room.status === "finished"
-            ? "bg-green-600 hover:bg-green-700"
-            : "bg-blue-600 hover:bg-blue-700"
-        } text-white`}
-        onClick={() => handleJoinRoom(room._id)}
-      >
-        {room.status === "finished" ? "View Result" : "Join"}
-      </button>
-              </div>
+            rooms.map((room) => (
+                    <div key={room._id} className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center">
+              <div>
+    <p className="text-lg font-semibold text-gray-700">Room ID: {room._id}</p>
+    <p className="text-sm text-gray-600">Duration: {room.duration} min</p>
+    <p className="text-sm text-gray-600">Status: {room.status}</p>
+  </div>
+
+  <div className="flex gap-2">
+          <button
+  className={`px-4 py-2 rounded transition ${
+    room.status === "finished"
+      ? (room.host === user?._id
+          ? "bg-green-600 hover:bg-green-700"
+          : "bg-gray-400 cursor-not-allowed")
+      : "bg-blue-600 hover:bg-blue-700"
+  } text-white`}
+    onClick={async () => {
+  const isHost = room.host === user?._id;
+
+  if (room.status === "finished" || room.status === "running") {
+    if (isHost) {
+      // Host can always enter their own room
+      const response = await getRoomDetails(room._id);
+      if (response && response.room) {
+        setParagraph(response.room.paragraph);
+        setRoom(response.room);
+        navigate("/typeRoom");
+      }
+    } else {
+      alert("You can only join a room if it’s not finished or running.");
+    }
+  } else {
+    // For pending status
+    handleJoinRoom(room._id);
+  }
+}}
+
+  disabled={room.status === "finished" && room.host !== user?._id}
+>
+    {room.status === "finished" ? "View Result": room.status === "running" ? room.host === user?._id? "Rejoin (Host)": "In Progress" : "Join"}
+
+</button>
+
+    <button
+      className="px-4 py-2 bg-red-500  text-white rounded"
+      onClick={() => handleDeleteRoom(room._id)}
+    >
+      Delete
+    </button>
+  </div>
+</div>
+
             ))
           )}
         </section>

@@ -178,23 +178,25 @@ export const getAllRooms = async (req, res) => {
 
 //delete a room
 export const deleteRoom = async (req, res) => {
-    const userId = req.user._id;
+    const userId = req.user?._id;
+    const roomId = req.params.roomId;
 
-    if(!userId) return res.status(400).json({message : "invalid user"});
-
-    const roomId = req.body.roomId;
-
-    if(!roomId) return res.status(400).json({message : "innvalid room"});
-
-    const room = await Room.findOne({host : userId, _id : roomId});
-    if(!room) res.status(404).json({ message : 'Room not found'});
-    if(room.host !== userId) res.status(400).json({ message : "Only host can delete this room"});
+    if (!userId) return res.status(400).json({ message: "Invalid user" });
+    if (!roomId) return res.status(400).json({ message: "Invalid room" });
 
     try {
-        await Room.deleteOne({host : userId, _id : roomId});
-        res.status(200).json({ message : "Room deleted successfully"});
+        const room = await Room.findById(roomId);
+        if (!room) return res.status(404).json({ message: 'Room not found' });
+
+        if (String(room.host) !== String(userId)) {
+            return res.status(403).json({ message: "Only the host can delete the room" });
+        }
+
+        await Room.deleteOne({ _id: roomId });
+        return res.status(200).json({ message: "Room deleted successfully" });
+
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message : "Internal Server Error"});
+        console.error("Delete Room Error:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};

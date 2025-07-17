@@ -2,20 +2,38 @@ import { FcClock } from "react-icons/fc";
 import React, { useEffect, useState, useRef } from 'react';
 import Leaderboard from './Leaderboard.jsx';
 import TypingArea from "./TypingArea.jsx";
-
-const BoardData = [
-  { name: 'User1', wpm: 75, rank: 1 },
-  { name: 'User2', wpm: 68, rank: 2 },
-  { name: 'You', wpm: 66, rank: 3 },
-  { name: 'User3', wpm: 62, rank: 4 },
-  { name: 'User4', wpm: 60, rank: 5 },
-];
+import { useRoomContext } from '../context/RoomContext';
+import { useAppContext } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 const TypingRoom = ({ paragraph, duration }) => {
   const [phase, setPhase] = useState("idle");
   const [timer, setTimer] = useState(0);
   const [userInput, setUserInput] = useState('');
   const intervalRef = useRef(null);
+  const navigate = useNavigate();
+
+  const {
+    room,
+    startRoom,
+    finishRoom,
+    leaveRoom
+  } = useRoomContext();
+
+  const { user } = useAppContext();
+  const userIsHost = String(room?.host) === String(user?._id);
+
+  useEffect(() => {
+    if (!room) return;
+
+    if (room.status === "pending") {
+      setPhase("idle");
+    } else if (room.status === "running") {
+      setPhase("typing");
+    } else if (room.status === "finished") {
+      setPhase("idle");
+    }
+  }, [room?.status]);
 
   useEffect(() => {
     if (phase === "waiting") {
@@ -23,6 +41,7 @@ const TypingRoom = ({ paragraph, duration }) => {
     } else if (phase === "typing") {
       setTimer(duration * 60);
     }
+
     if (phase !== "idle") {
       intervalRef.current = setInterval(() => {
         setTimer(prev => {
@@ -30,7 +49,10 @@ const TypingRoom = ({ paragraph, duration }) => {
             clearInterval(intervalRef.current);
             if (phase === "waiting") {
               setPhase("typing");
+              if (userIsHost) startRoom(room._id); // Host starts room for all
             } else if (phase === "typing") {
+              if (userIsHost) finishRoom(room._id); // Host finishes room
+              else leaveRoom(room._id); // User leaves room
               setPhase("idle");
             }
           }
@@ -40,21 +62,36 @@ const TypingRoom = ({ paragraph, duration }) => {
     }
 
     return () => clearInterval(intervalRef.current);
-  }, [phase, duration]);
+  }, [phase, duration, userIsHost, room?._id]);
 
   const handleStart = () => {
+  if (room?.status === "finished") return;
+  if (userIsHost) {
     setPhase("waiting");
     setUserInput('');
-  };
+  } else {
+    alert("Only host can start the game");
+  }
+};
 
-  const handleEnd = () => {
-    setPhase("idle");
-    setUserInput('');
-    clearInterval(intervalRef.current);
-  };
+    const handleEnd = () => {
+  setPhase("idle");
+  setUserInput('');
+  clearInterval(intervalRef.current);
+
+  if (userIsHost) {
+    finishRoom(room._id);
+  } else {
+    leaveRoom(room._id);
+  }
+
+  navigate("/room");
+};
+
+
 
   return (
-    <div className="h-screen  w-full overflow-hidden bg-gray-100 flex flex-row p-4 gap-4">
+    <div className="h-screen w-full overflow-hidden bg-gray-100 flex flex-row p-4 gap-4">
       {/* Left Side */}
       <div className="flex mt-20 flex-col w-2/3 items-center gap-4">
         <div className="h-20 flex items-center justify-center">
@@ -80,27 +117,28 @@ const TypingRoom = ({ paragraph, duration }) => {
       {/* Right Side */}
       <div className="w-1/3 p-3 flex flex-col gap-4">
         <div className="flex-1 overflow-hidden">
-          <Leaderboard users={BoardData} />
+          <Leaderboard />
         </div>
 
         <div className="bg-gray-100 rounded-lg shadow p-4 space-y-3">
           <p className="text-lg text-center text-gray-700">
-            <strong>Room ID:</strong> abc123
+            <strong>Room ID:</strong> {room?._id || 'N/A'}
           </p>
           <div className="flex gap-2">
-            <button
-              className="flex-1 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
-              onClick={handleStart}
-              disabled={phase !== "idle"}
-            >
-              Start
-            </button>
-            <button
-              className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2"
-              onClick={handleEnd}
-            >
-              End
-            </button>
+        <button
+  className="flex-1 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
+  onClick={handleStart}
+  disabled={room?.status === "finished" || phase !== "idle" || !userIsHost}
+>
+  Start
+</button>
+
+  <button
+  className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2"
+  onClick={handleEnd}
+>
+  End
+</button>
           </div>
         </div>
       </div>
