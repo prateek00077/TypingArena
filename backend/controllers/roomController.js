@@ -188,6 +188,7 @@ export const deleteRoom = async (req, res) => {
 
     const room = await Room.findOne({host : userId, _id : roomId});
     if(!room) res.status(404).json({ message : 'Room not found'});
+    if(room.host !== userId) res.status(400).json({ message : "Only host can delete this room"});
 
     try {
         await Room.deleteOne({host : userId, _id : roomId});
