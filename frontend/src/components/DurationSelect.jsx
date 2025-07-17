@@ -8,7 +8,7 @@ return (
         className="font-mono px-2 py-1 rounded border"
         value={duration}
         onChange={e => setDuration(Number(e.target.value))}
-        disabled={startTime !== null && !showResult}
+        // disabled={startTime !== null && !showResult}
     >
         <option value={0.5}>30 sec</option>
         <option value={1}>1 min</option>
