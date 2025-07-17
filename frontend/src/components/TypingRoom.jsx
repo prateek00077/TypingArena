@@ -36,7 +36,13 @@ const TypingRoom = ({ paragraph, duration }) => {
       setPhase("idle");
     }
   }, [room?.status]);
-
+  useEffect(() => {
+  return () => {
+    if (room) {
+      leaveRoom(room._id);
+    }
+  };
+}, []);
   useEffect(() => {
     if (phase === "waiting") {
       setTimer(30);
