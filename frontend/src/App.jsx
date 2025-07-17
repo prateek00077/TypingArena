@@ -6,6 +6,7 @@ import Settings from './components/Settings';
 import RoomPage from './components/RoomPage';
 import TypingRoom from './components/TypingRoom';
 import ProtectedRoute from './components/ProtectedRoute';
+import RankCard from './components/RankCard';
 import SignUp from './pages/Signup';
 import Login from './pages/Login';
 import { useState } from 'react';
@@ -30,6 +31,7 @@ const AppContent = () => {
         <Route path="/profile" element={<ProtectedRoute> <Profile /></ProtectedRoute>}/>
         <Route path="/settings" element={<Settings />} />
         <Route path="/typeRoom" element={<TypingRoom paragraph={paragraph} duration={duration} />} />
+        <Route path="/rank" element={<ProtectedRoute><RankCard /></ProtectedRoute>} />
       </Routes>
     </div>
   );

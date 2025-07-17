@@ -24,8 +24,10 @@ const TypingRoom = ({ paragraph, duration }) => {
   const userIsHost = String(room?.host) === String(user?._id);
 
   useEffect(() => {
-    if (!room) return;
-
+    if (!room) {
+      navigate("/room"); 
+      return;
+    }
     if (room.status === "pending") {
       setPhase("idle");
     } else if (room.status === "running") {
@@ -52,15 +54,16 @@ const TypingRoom = ({ paragraph, duration }) => {
               if (userIsHost) startRoom(room._id); // Host starts room for all
             } else if (phase === "typing") {
               if (userIsHost) finishRoom(room._id); // Host finishes room
-              else leaveRoom(room._id); // User leaves room
+              // else leaveRoom(room._id); // User leaves room
               setPhase("idle");
+              navigate("/rank");
             }
           }
           return prev - 1;
         });
       }, 1000);
     }
-
+  
     return () => clearInterval(intervalRef.current);
   }, [phase, duration, userIsHost, room?._id]);
 
@@ -69,27 +72,19 @@ const TypingRoom = ({ paragraph, duration }) => {
   if (userIsHost) {
     setPhase("waiting");
     setUserInput('');
-  } else {
-    alert("Only host can start the game");
-  }
+  } 
+  else alert("Only host can start the game");
 };
 
-    const handleEnd = () => {
+  const handleEnd = () => {
   setPhase("idle");
   setUserInput('');
   clearInterval(intervalRef.current);
 
-  if (userIsHost) {
-    finishRoom(room._id);
-  } else {
-    leaveRoom(room._id);
-  }
-
+  if (userIsHost) finishRoom(room._id);
+  else leaveRoom(room._id); 
   navigate("/room");
 };
-
-
-
   return (
     <div className="h-screen w-full overflow-hidden bg-gray-100 flex flex-row p-4 gap-4">
       {/* Left Side */}
@@ -125,25 +120,40 @@ const TypingRoom = ({ paragraph, duration }) => {
             <strong>Room ID:</strong> {room?._id || 'N/A'}
           </p>
           <div className="flex gap-2">
-        <button
-  className="flex-1 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
-  onClick={handleStart}
-  disabled={room?.status === "finished" || phase !== "idle" || !userIsHost}
->
-  Start
-</button>
-
+        {userIsHost && (
+    <>
+    <button
+      className="flex-1 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
+      onClick={handleStart}
+      disabled={room?.status === "finished" || phase !== "idle"}
+    >
+      Start
+    </button>
+    <button
+      className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2"
+      onClick={handleEnd}
+    >
+      End
+    </button>
+    </>
+  )}
+  {!userIsHost && (
   <button
-  className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2"
-  onClick={handleEnd}
->
-  End
-</button>
-          </div>
+    className="w-full bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
+    onClick={() => {
+      leaveRoom(room._id);
+      navigate("/room");
+    }}
+    >
+    Leave Room
+  </button>
+  )}
+
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default TypingRoom;

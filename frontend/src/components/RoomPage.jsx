@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import RoomModel from './RoomModel';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { DurationChange } from './DurationSelect';
 import JoinRoomModal from './JoinRoomModal';
 import { useRoomContext } from '../context/RoomContext';
-import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import RankCard from './RankCard';
+
 const RoomPage = ({ setParagraph, duration, setDuration }) => {
   const [showModal, setShowModal] = useState(false);
   const [joinModal, setJoinModal] = useState(false);
   const [localParagraph, setLocalParagraph] = useState('');
   const [roomIdInput, setRoomIdInput] = useState('');
-  const {user } = useAppContext();
+  const [showRankCard, setShowRankCard] = useState(false);
+  const [selectedRoomId, setSelectedRoomId] = useState(null);
+
+  const { user } = useAppContext();
   const navigate = useNavigate();
 
   const {
@@ -19,9 +23,6 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
     loading,
     createRoom,
     joinRoom,
-    startRoom,
-    finishRoom,
-    leaveRoom,
     getRoomDetails,
     setRoom,
     getAllRooms,
@@ -31,12 +32,11 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
   const handleCreateRoom = async () => {
     try {
       const response = await createRoom(localParagraph, duration);
-
       if (response && response.newRoom) {
         setParagraph(localParagraph);
         setShowModal(false);
         const updated = await getAllRooms();
-        setRooms(updated); // refresh rooms live ✅
+        setRooms(updated);
       }
     } catch (error) {
       console.error('Error creating room:', error);
@@ -45,55 +45,53 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
   };
 
   const handleJoinRoom = async (roomId = roomIdInput) => {
-  try {
-    if (!roomId) {
-      alert("Room ID is required");
-      return;
-    }
+    try {
+      if (!roomId) {
+        alert('Room ID is required');
+        return;
+      }
 
-    const response = await joinRoom(roomId); // <-- roomId must be a valid string
-    if (response && response.room) {
-      setParagraph(response.room.paragraph);
-      setJoinModal(false);
-      navigate("/typeRoom");
+      const response = await joinRoom(roomId);
+      if (response && response.room) {
+        setParagraph(response.room.paragraph);
+        setJoinModal(false);
+        navigate('/typeRoom');
+      }
+      return response;
+    } catch (error) {
+      console.error('Error joining room:', error);
+      alert('Failed to join room. Room may not exist.');
     }
-    return response;
-  } catch (error) {
-    console.error("Error joining room:", error);
-    alert("Failed to join room. Room may not exist.");
-  }
-};
-  const handleDeleteRoom = async (roomId) => {
-  const confirmDelete = window.confirm("Are you sure you want to delete this room?");
-  if (!confirmDelete) return;
-
-  try {
-    await deleteRoom(roomId);
-    const updatedRooms = await getAllRooms();
-    setRooms(updatedRooms); // refresh after delete
-  } catch (error) {
-    console.error("Error deleting room:", error);
-    alert("Failed to delete room");
-  }
   };
 
+  const handleDeleteRoom = async (roomId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this room?');
+    if (!confirmDelete) return;
+
+    try {
+      await deleteRoom(roomId);
+      const updatedRooms = await getAllRooms();
+      setRooms(updatedRooms);
+    } catch (error) {
+      console.error('Error deleting room:', error);
+      alert('Failed to delete room');
+    }
+  };
 
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const allRooms = await getAllRooms(); // returns []
-        setRooms(allRooms); 
+        const allRooms = await getAllRooms();
+        setRooms(allRooms);
       } catch (err) {
-        console.error("Failed to fetch rooms:", err);
+        console.error('Failed to fetch rooms:', err);
       }
     };
 
     fetchRooms();
   }, []);
-
-
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-6 px-4">
@@ -102,7 +100,7 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
           Room Management
         </h2>
 
-        {/* Create Room Section */}
+        {/* Buttons */}
         <div className="flex justify-center gap-4">
           <button
             className="px-4 py-2 bg-white border-2 border-gray-700 font-medium rounded-lg"
@@ -126,81 +124,88 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
           {rooms.length === 0 ? (
             <p className="text-center text-gray-500">No rooms available.</p>
           ) : (
-            rooms.map((room) => (
-                    <div key={room._id} className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center">
-              <div>
-    <p className="text-lg font-semibold text-gray-700">Room ID: {room._id}</p>
-    <p className="text-sm text-gray-600">Duration: {room.duration} min</p>
-    <p className="text-sm text-gray-600">Status: {room.status}</p>
-  </div>
+            rooms.map((room) => {
+              const isHost = room.host === user?._id;
+              const isFinished = room.status === 'finished';
+              const isRunning = room.status === 'running';
 
-  <div className="flex gap-2">
-          <button
-  className={`px-4 py-2 rounded transition ${
-    room.status === "finished"
-      ? (room.host === user?._id
-          ? "bg-green-600 hover:bg-green-700"
-          : "bg-gray-400 cursor-not-allowed")
-      : "bg-blue-600 hover:bg-blue-700"
-  } text-white`}
-    onClick={async () => {
-  const isHost = room.host === user?._id;
+              return (
+                <div key={room._id} className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">Room ID: {room._id}</p>
+                    <p className="text-sm text-gray-600">Duration: {room.duration} min</p>
+                    <p className="text-sm text-gray-600">Status: {room.status}</p>
+                  </div>
 
-  if (room.status === "finished" || room.status === "running") {
-    if (isHost) {
-      // Host can always enter their own room
-      const response = await getRoomDetails(room._id);
-      if (response && response.room) {
-        setParagraph(response.room.paragraph);
-        setRoom(response.room);
-        navigate("/typeRoom");
-      }
-    } else {
-      alert("You can only join a room if it’s not finished or running.");
-    }
-  } else {
-    // For pending status
-    handleJoinRoom(room._id);
-  }
-}}
+                  <div className="flex gap-2">
+                    <button
+                      className={`px-4 py-2 rounded transition ${
+                        isFinished
+                          ? isHost
+                            ? 'bg-green-600 hover:bg-green-700'
+                            : 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700'
+                      } text-white`}
+                      onClick={async () => {
+                        if (isFinished) {
+                          if (isHost) {
+                            const response = await getRoomDetails(room._id);
+                            if (response && response.room) {
+                              setSelectedRoomId(room._id);
+                              setShowRankCard(true);
+                            }
+                          } else {
+                            alert('You can only join a room if it’s not finished or running.');
+                          }
+                        } else if (isRunning) {
+                          if (isHost) {
+                            const response = await getRoomDetails(room._id);
+                            if (response && response.room) {
+                              setParagraph(response.room.paragraph);
+                              setRoom(response.room);
+                              navigate('/typeRoom');
+                            }
+                          } else {
+                            alert('You can only join a room if it’s not finished or running.');
+                          }
+                        } else {
+                          handleJoinRoom(room._id);
+                        }
+                      }}
+                      disabled={isFinished && !isHost}
+                    >
+                      {isFinished ? 'View Result' : isRunning ? (isHost ? 'Rejoin (Host)' : 'In Progress') : 'Join'}
+                    </button>
 
-  disabled={room.status === "finished" && room.host !== user?._id}
->
-    {room.status === "finished" ? "View Result": room.status === "running" ? room.host === user?._id? "Rejoin (Host)": "In Progress" : "Join"}
-
-</button>
-
-    <button
-      className="px-4 py-2 bg-red-500  text-white rounded"
-      onClick={() => handleDeleteRoom(room._id)}
-    >
-      Delete
-    </button>
-  </div>
-</div>
-
-            ))
+                    <button
+                      className="px-4 py-2 bg-red-500 text-white rounded"
+                      onClick={() => handleDeleteRoom(room._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              );
+            })
           )}
         </section>
       </div>
 
+      {/* Rank Card */}
+      {showRankCard && selectedRoomId && (
+        <div className="mt-4 z-50">
+          <RankCard roomId={selectedRoomId} onClose={() => setShowRankCard(false)} />
+        </div>
+      )}
+
       {/* Room Modal */}
       {showModal && (
-        <RoomModel
-          onClose={() => setShowModal(false)}
-          onSubmit={handleCreateRoom}
-        >
+        <RoomModel onClose={() => setShowModal(false)} onSubmit={handleCreateRoom}>
           <div className="flex justify-center mt-4">
-            <DurationChange
-              duration={duration}
-              setDuration={setDuration}
-            />
+            <DurationChange duration={duration} setDuration={setDuration} />
           </div>
-
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-800">
-              Paste Paragraph:
-            </label>
+            <label className="block text-sm font-medium text-gray-800">Paste Paragraph:</label>
             <textarea
               value={localParagraph}
               onChange={(e) => setLocalParagraph(e.target.value)}
@@ -212,7 +217,7 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
         </RoomModel>
       )}
 
-      {/* Join Modal hai ye  */}
+      {/* Join Modal */}
       {joinModal && (
         <JoinRoomModal
           onClose={() => {
@@ -221,11 +226,9 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
           }}
           value={roomIdInput}
           onChange={(e) => setRoomIdInput(e.target.value)}
-          onSubmit={()=>handleJoinRoom(roomIdInput)}
+          onSubmit={() => handleJoinRoom(roomIdInput)}
         />
       )}
-
-
     </div>
   );
 };
