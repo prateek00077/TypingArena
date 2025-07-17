@@ -87,9 +87,14 @@ const TypingRoom = ({ paragraph, duration }) => {
   setUserInput('');
   clearInterval(intervalRef.current);
 
-  if (userIsHost) finishRoom(room._id);
-  else leaveRoom(room._id); 
-  navigate("/room");
+  if (userIsHost) {
+    finishRoom(room._id);
+    navigate("/rank"); 
+  }
+  else {
+    leaveRoom(room._id); 
+    navigate("/room");
+  }
 };
   return (
     <div className="h-screen w-full overflow-hidden bg-gray-100 flex flex-row p-4 gap-4">
