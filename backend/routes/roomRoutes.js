@@ -1,5 +1,5 @@
 import express from 'express';
-import { createRoom, finishRoom, getAllRooms, getRoomDetails, joinRoom, leaveRoom, startRoom } from '../controllers/roomController.js';
+import { createRoom, deleteRoom, finishRoom, getAllRooms, getRoomDetails, joinRoom, leaveRoom, startRoom } from '../controllers/roomController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
 const roomRouter = express.Router();
@@ -12,5 +12,6 @@ roomRouter.post('/finish',finishRoom);
 roomRouter.delete('/leave',leaveRoom);
 roomRouter.get('/getdetails',getRoomDetails);
 roomRouter.get('/getallrooms',getAllRooms);
+roomRouter.delete('/delete',deleteRoom);
 
 export default roomRouter;

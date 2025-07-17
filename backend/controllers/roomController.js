@@ -131,7 +131,7 @@ export const leaveRoom = async (req, res) => {
     const userId = req.user?._id;
     const roomId = req.body.roomId;
 
-    if (!userId) return res.status(401).json({ message: "User not found, please login" });
+    if (!userId) return res.status(404).json({ message: "User not found, please login" });
     if (!roomId) return res.status(400).json({ message: "Invalid room" });
 
     const room = await Room.findById(roomId);
