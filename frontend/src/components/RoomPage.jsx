@@ -106,7 +106,7 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
             className="px-4 py-2 bg-white border-2 border-gray-700 font-medium rounded-lg"
             onClick={() => setJoinModal(true)}
           >
-            {'Join Room'}
+            {room?.status === 'finished' ? 'View Result' : (loading ? 'Joining...' : 'Join Room')}
           </button>
           <button
             className="px-4 py-2 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-lg transition font-medium"
