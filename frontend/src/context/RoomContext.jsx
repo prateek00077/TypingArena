@@ -33,7 +33,7 @@ export const RoomProvider = ({ children }) => {
   const joinRoom = async (roomId) => {
     setLoading(true);
     try {
-      const { data } = await api.post("/join", { roomId });
+      const { data } = await api.post("/join", { roomId },);
       setRoom(data.room);
       return data;
     } finally {
@@ -81,13 +81,41 @@ export const RoomProvider = ({ children }) => {
   const getRoomDetails = async (roomId) => {
     setLoading(true);
     try {
-      const { data } = await api.get("/get", { params: { roomId } });
+      const { data } = await api.post("/getdetails",  { roomId } );
       setRoom(data.room);
       return data;
     } finally {
       setLoading(false);
     }
   };
+
+  const getAllRooms = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get("/getallrooms");
+      return data.rooms;
+    } catch (err) {
+      console.error("Error fetching all rooms", err);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete a room
+const deleteRoom = async (roomId) => {
+  setLoading(true);
+  try {
+    const { data } = await api.delete(`/delete/${roomId}`);
+    return data;
+  } catch (err) {
+    console.error("Failed to delete room", err);
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const value = {
     room,
@@ -99,6 +127,8 @@ export const RoomProvider = ({ children }) => {
     leaveRoom,
     getRoomDetails,
     setRoom,
+    getAllRooms,
+    deleteRoom,
   };
 
   return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>;

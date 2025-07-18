@@ -10,8 +10,8 @@ roomRouter.post('/join',joinRoom);
 roomRouter.post('/start',startRoom);
 roomRouter.post('/finish',finishRoom);
 roomRouter.delete('/leave',leaveRoom);
-roomRouter.get('/getdetails',getRoomDetails);
+roomRouter.post('/getdetails',getRoomDetails);
 roomRouter.get('/getallrooms',getAllRooms);
-roomRouter.delete('/delete',deleteRoom);
+roomRouter.delete('/delete/:roomId',deleteRoom);
 
 export default roomRouter;
