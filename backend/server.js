@@ -32,7 +32,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 io.on('connection', (socket) => {
-  roomSocketHandler(io, socket); // handle socket logic
+  console.log(`New socket connection: ${socket.id}`);
+  roomSocketHandler(io, socket);
 });
 
 // Routes
