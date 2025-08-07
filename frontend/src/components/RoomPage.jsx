@@ -6,6 +6,7 @@ import JoinRoomModal from './JoinRoomModal';
 import { useRoomContext } from '../context/RoomContext';
 import { useAppContext } from '../context/AppContext';
 import RankCard from './RankCard';
+import { useLocation } from 'react-router-dom';
 
 const RoomPage = ({ setParagraph, duration, setDuration }) => {
   const [showModal, setShowModal] = useState(false);
@@ -17,7 +18,7 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
 
   const { user } = useAppContext();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const {
     room,
     loading,
@@ -35,6 +36,7 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
       if (response && response.newRoom) {
         setParagraph(localParagraph);
         setShowModal(false);
+        setLocalParagraph(''); 
         const updated = await getAllRooms();
         setRooms(updated);
       }
@@ -91,7 +93,7 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
     };
 
     fetchRooms();
-  }, []);
+  }, [location]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-6 px-4">
