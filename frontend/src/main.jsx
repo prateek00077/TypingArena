@@ -5,22 +5,20 @@ import { AppProvider } from './context/AppContext.jsx';
 import { ResultProvider } from './context/ResultContext.jsx';
 import { RoomProvider } from './context/RoomContext.jsx';
 import { BrowserRouter } from 'react-router';
-import { io } from 'socket.io-client';
+import { SocketProvider } from './context/SocketContext.jsx';
 
-// Initialize socket connection
-const socket = io('http://localhost:3000', {
-  withCredentials: true,
-  transports: ['websocket'],
-});
+
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
+  <SocketProvider>
     <ResultProvider>
       <RoomProvider>
         <AppProvider>
-          <App socket={socket} />
+          <App />
         </AppProvider>
       </RoomProvider>
     </ResultProvider>
+  </SocketProvider>
   </BrowserRouter>
 );
 

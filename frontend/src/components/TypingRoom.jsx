@@ -1,170 +1,206 @@
-import { FcClock } from "react-icons/fc";
 import React, { useEffect, useState, useRef } from 'react';
+import { FcClock } from "react-icons/fc";
+import { useNavigate } from 'react-router-dom';
 import Leaderboard from './Leaderboard.jsx';
 import TypingArea from "./TypingArea.jsx";
 import { useRoomContext } from '../context/RoomContext';
 import { useAppContext } from '../context/AppContext';
-import { useNavigate } from 'react-router-dom';
+import { useSocket } from '../context/SocketContext';
+import RankCard from './RankCard.jsx';
 
-const TypingRoom = ({ paragraph, duration }) => {
-  const [phase, setPhase] = useState("idle");
-  const [timer, setTimer] = useState(0);
-  const [userInput, setUserInput] = useState('');
-  const intervalRef = useRef(null);
-  const navigate = useNavigate();
+const TypingRoom = ({ paragraph }) => {
+    const [phase, setPhase] = useState("idle");
+    const [timer, setTimer] = useState(0);
+    const [userInput, setUserInput] = useState('');
+    const [liveLeaderboard, setLiveLeaderboard] = useState([]);
+    const [showRankCard, setShowRankCard] = useState(false);
+    const intervalRef = useRef(null);
 
-  const {
-    room,
-    startRoom,
-    finishRoom,
-    leaveRoom
-  } = useRoomContext();
+    const { room, leaveRoom,getRoomDetails } = useRoomContext();
+    const { user } = useAppContext();
+    const socket = useSocket();
+    const navigate = useNavigate();
 
-  const { user } = useAppContext();
-  const userIsHost = String(room?.host) === String(user?._id);
+    const userIsHost = String(room?.host) === String(user?._id);
 
-  useEffect(() => {
-    if (!room) {
-      navigate("/room"); 
-      return;
-    }
-    if (room.status === "pending") {
-      setPhase("idle");
-    } else if (room.status === "running") {
-      setPhase("typing");
-    } else if (room.status === "finished") {
-      setPhase("idle");
-    }
-  }, [room?.status]);
-  useEffect(() => {
-  return () => {
-    if (room) {
-      leaveRoom(room._id);
-    }
-  };
-}, []);
-  useEffect(() => {
-    if (phase === "waiting") {
-      setTimer(30);
-    } else if (phase === "typing") {
-      setTimer(duration * 60);
-    }
+    useEffect(() => {
+        if (!socket || !room?._id || !user?._id) {
+            navigate('/room');
+            return;
+        }
 
-    if (phase !== "idle") {
-      intervalRef.current = setInterval(() => {
-        setTimer(prev => {
-          if (prev === 1) {
-            clearInterval(intervalRef.current);
-            if (phase === "waiting") {
-              setPhase("typing");
-              if (userIsHost) startRoom(room._id); // Host starts room for all
-            } else if (phase === "typing") {
-              if (userIsHost) finishRoom(room._id); // Host finishes room
-              // else leaveRoom(room._id); // User leaves room
-              setPhase("idle");
-              navigate("/rank");
+        socket.emit("joinRoom", { roomId: room._id, userId: user._id, username: user.username });
+
+        const handleGameStart = ({ startTime }) => {
+            const countdown = Math.max(0, Math.floor((startTime - Date.now()) / 1000));
+            setPhase("waiting");
+            setTimer(countdown);
+        };
+        
+        const handleGameEnd = async () => {
+        setPhase("finished");
+        clearInterval(intervalRef.current);
+        if (room?._id) {
+        await getRoomDetails(room._id);
+        }
+        setShowRankCard(true);
+};
+        const handleLeaderboardUpdate = (updatedUsers) => {
+            setLiveLeaderboard(updatedUsers);
+        };
+        
+        socket.on('gameStart', handleGameStart);
+        socket.on('gameEnd', handleGameEnd);
+        socket.on('leaderboardUpdate', handleLeaderboardUpdate);
+
+        return () => {
+            socket.off('gameStart', handleGameStart);
+            socket.off('gameEnd', handleGameEnd);
+            socket.off('leaderboardUpdate', handleLeaderboardUpdate);
+        };
+    }, [socket, room?._id, user?._id, navigate]);
+
+    useEffect(() => {
+        clearInterval(intervalRef.current);
+    
+        if (phase === "waiting" && timer > 0) {
+            intervalRef.current = setInterval(() => {
+                setTimer(prev => prev - 1);
+            }, 1000);
+        } else if (phase === "waiting" && timer <= 0) {
+            setPhase("typing");
+            setTimer((room?.duration || 1) * 60);
+        } else if (phase === "typing" && timer > 0) {
+            intervalRef.current = setInterval(() => {
+                setTimer(prev => prev - 1);
+            }, 1000);
+        } else if (phase === "typing" && timer <= 0) {
+            if (userIsHost) {
+                socket.emit("endGame", { roomId: room._id });
             }
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-  
-    return () => clearInterval(intervalRef.current);
-  }, [phase, duration, userIsHost, room?._id]);
+        }
+    
+        return () => clearInterval(intervalRef.current);
+    }, [phase, timer, room?.duration, userIsHost, socket, room?._id]);
 
-  const handleStart = () => {
-  if (room?.status === "finished") return;
-  if (userIsHost) {
-    setPhase("waiting");
-    setUserInput('');
-  } 
-  else alert("Only host can start the game");
-};
 
-  const handleEnd = () => {
-  setPhase("idle");
-  setUserInput('');
-  clearInterval(intervalRef.current);
+    const calculateWPM = (typed) => {
+        const timeElapsed = ((room?.duration || 1) * 60) - timer;
+        if (timeElapsed <= 0) return 0;
+        const wordsTyped = typed.trim().split(/\s+/).filter(Boolean).length;
+        const minutes = timeElapsed / 60;
+        return Math.round(wordsTyped / minutes);
+    };
 
-  if (userIsHost) {
-    finishRoom(room._id);
-    navigate("/rank"); 
-  }
-  else {
-    leaveRoom(room._id); 
-    navigate("/room");
-  }
-};
-  return (
-    <div className="h-screen w-full overflow-hidden bg-gray-100 flex flex-row p-4 gap-4">
-      {/* Left Side */}
-      <div className="flex mt-20 flex-col w-2/3 items-center gap-4">
-        <div className="h-20 flex items-center justify-center">
-          {(phase === "waiting" || phase === "typing") && (
-            <div className="flex flex-row gap-3 items-center">
-              <h1 className="text-3xl text-gray-800 font-bold">
-                {phase === "waiting" ? "Starts In" : "Ends In"}
-              </h1>
-              <FcClock className="text-5xl" />
-              <div className="text-3xl font-bold text-red-700">{timer} sec</div>
+    const calculateAccuracy = (typed, para) => {
+        if (!typed) return 100;
+        const correctChars = typed.split('').filter((char, i) => char === para[i]).length;
+        return Math.round((correctChars / typed.length) * 100);
+    };
+
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setUserInput(value);
+
+        if (phase === "typing" && socket) {
+            socket.emit("updateProgress", {
+                wpm: calculateWPM(value),
+                accuracy: calculateAccuracy(value, paragraph),
+            });
+        }
+    };
+    
+    useEffect(() => {
+        return () => {
+            if ((phase === "typing" || phase === "finished") && socket && room && user) {
+                socket.emit("submitFinalResult", {
+                    roomId: room._id,
+                    userId: user._id,
+                    username: user.username,
+                    wpm: calculateWPM(userInput),
+                    accuracy: calculateAccuracy(userInput, paragraph),
+                });
+            }
+        };
+    }, [phase, socket, room, user, userInput, paragraph]);
+
+    const handleStart = () => {
+        if (userIsHost && socket) {
+            socket.emit("startGame", { roomId: room._id });
+        }
+    };
+
+    const handleEnd = () => {
+        if (userIsHost && socket) {
+            socket.emit("endGame", { roomId: room._id });
+        }
+    };
+    
+    return (
+        <div className="h-screen w-full overflow-hidden bg-gray-100 flex flex-row p-4 gap-4">
+            {showRankCard && <RankCard onClose={() => navigate('/room')} />}
+            
+            <div className="flex mt-20 flex-col w-2/3 items-center gap-4">
+                <div className="h-20 flex items-center justify-center">
+                    {(phase === "waiting" || phase === "typing") && (
+                        <div className="flex flex-row gap-3 items-center">
+                            <h1 className="text-3xl text-gray-800 font-bold">
+                                {phase === "waiting" ? "Starts In" : "Time Left"}
+                            </h1>
+                            <FcClock className="text-5xl" />
+                            <div className="text-3xl font-bold text-red-700">{timer}s</div>
+                        </div>
+                    )}
+                </div>
+                <TypingArea
+                    paragraph={paragraph || "Loading paragraph..."}
+                    userInput={userInput}
+                    onInputChange={handleInputChange}
+                    disabled={phase !== "typing"}
+                />
             </div>
-          )}
+
+            <div className="w-1/3 p-3 flex flex-col gap-4">
+                <div className="flex-1 overflow-hidden">
+                    <Leaderboard users={liveLeaderboard} />
+                </div>
+                <div className="bg-white rounded-lg shadow p-4 space-y-3">
+                    <p className="text-lg text-center text-gray-700">
+                        <strong>Room ID:</strong> {room?._id || 'N/A'}
+                    </p>
+                    <div className="flex gap-2">
+                        {userIsHost ? (
+                            <>
+                                <button
+                                    className="flex-1 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2 disabled:opacity-50"
+                                    onClick={handleStart}
+                                    disabled={phase !== "idle"}
+                                >
+                                    Start Game
+                                </button>
+                                <button
+                                    className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2"
+                                    onClick={handleEnd}
+                                >
+                                    End Game
+                                </button>
+                            </>
+                        ) : (
+                            <button
+                                className="w-full bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
+                                onClick={() => {
+                                    if(leaveRoom) leaveRoom(room._id);
+                                    navigate("/room");
+                                }}
+                            >
+                                Leave Room
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <TypingArea
-          paragraph={paragraph || "Paragraph here"}
-          userInput={userInput}
-          onInputChange={(e) => setUserInput(e.target.value)}
-          disabled={phase !== "typing"}
-        />
-      </div>
-
-      {/* Right Side */}
-      <div className="w-1/3 p-3 flex flex-col gap-4">
-        <div className="flex-1 overflow-hidden">
-          <Leaderboard />
-        </div>
-
-        <div className="bg-gray-100 rounded-lg shadow p-4 space-y-3">
-          <p className="text-lg text-center text-gray-700">
-            <strong>Room ID:</strong> {room?._id || 'N/A'}
-          </p>
-          <div className="flex gap-2">
-        {userIsHost && (
-    <>
-    <button
-      className="flex-1 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
-      onClick={handleStart}
-      disabled={room?.status === "finished" || phase !== "idle"}
-    >
-      Start
-    </button>
-    <button
-      className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2"
-      onClick={handleEnd}
-    >
-      End
-    </button>
-    </>
-  )}
-  {!userIsHost && (
-  <button
-    className="w-full bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
-    onClick={() => {
-      leaveRoom(room._id);
-      navigate("/room");
-    }}
-    >
-    Leave Room
-  </button>
-  )}
-
-        </div>
-      </div>
-    </div>
-  </div>
-);
+    );
 };
 
 export default TypingRoom;
