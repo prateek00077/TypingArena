@@ -9,7 +9,7 @@ import connectDB from './config/db.js';
 import userRouter from './routes/userRoutes.js';
 import resultRouter from './routes/resultRoutes.js';
 import roomRouter from './routes/roomRoutes.js';
-import roomSocketHandler from './sockets/roomScoketHandler.js';
+import roomSocketHandler from './sockets/roomSocketHandler.js';
 
 dotenv.config();
 connectDB(); 

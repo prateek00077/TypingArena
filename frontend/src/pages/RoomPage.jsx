@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import RoomModel from './RoomModel';
+import RoomModel from '../components/RoomModel';
 import { Link, useNavigate } from 'react-router-dom';
-import { DurationChange } from './DurationSelect';
-import JoinRoomModal from './JoinRoomModal';
+import { DurationChange } from '../components/DurationSelect';
+import JoinRoomModal from '../components/JoinRoomModal';
 import { useRoomContext } from '../context/RoomContext';
 import { useAppContext } from '../context/AppContext';
-import RankCard from './RankCard';
+import RankCard from '../components/RankCard';
 import { useLocation } from 'react-router-dom';
 
 const RoomPage = ({ setParagraph, duration, setDuration }) => {
@@ -96,16 +96,16 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-6 px-4">
-      <div className="w-full max-w-3xl bg-white p-4 rounded-xl shadow-md space-y-6 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <h2 className="text-3xl font-semibold text-gray-900 text-center">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center py-6 px-4">
+      <div className="w-full max-w-3xl bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md space-y-6 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <h2 className="text-3xl font-semibold text-gray-900 dark:text-white text-center">
           Room Management
         </h2>
 
         {/* Buttons */}
         <div className="flex justify-center gap-4">
           <button
-            className="px-4 py-2 bg-white border-2 border-gray-700 font-medium rounded-lg"
+            className="px-4 py-2 bg-white dark:bg-gray-700 dark:text-white border-2 border-gray-700 font-medium rounded-lg"
             onClick={() => setJoinModal(true)}
           >
             {'Join Room'}
@@ -120,9 +120,9 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
 
         {/* Room List */}
         <section className="space-y-4 overflow-y-auto max-h-64 px-2">
-          <h3 className="text-xl font-medium text-gray-800 text-center">Available Rooms</h3>
+          <h3 className="text-xl font-medium text-gray-800 dark:text-white text-center">Available Rooms</h3>
           {rooms.length === 0 ? (
-            <p className="text-center text-gray-500">No rooms available.</p>
+            <p className="text-center text-gray-500 dark:text-gray-300">No rooms available.</p>
           ) : (
             rooms.map((room) => {
               const isHost = room.host === user?._id;
@@ -130,11 +130,11 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
               const isRunning = room.status === 'running';
 
               return (
-                <div key={room._id} className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center">
+                <div key={room._id} className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow flex justify-between items-center">
                   <div>
-                    <p className="text-lg font-semibold text-gray-700">Room ID: {room._id}</p>
-                    <p className="text-sm text-gray-600">Duration: {room.duration} min</p>
-                    <p className="text-sm text-gray-600">Status: {room.status}</p>
+                    <p className="text-lg font-semibold text-gray-700 dark:text-white">Room ID: {room._id}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Duration: {room.duration} min</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Status: {room.status}</p>
                   </div>
 
                   <div className="flex gap-2">
@@ -178,7 +178,7 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
                     </button>
 
                     <button
-                      className="px-4 py-2 bg-red-500 text-white rounded"
+                      className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
                       onClick={() => handleDeleteRoom(room._id)}
                     >
                       Delete
@@ -205,11 +205,11 @@ const RoomPage = ({ setParagraph, duration, setDuration }) => {
             <DurationChange duration={duration} setDuration={setDuration} />
           </div>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-800">Paste Paragraph:</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">Paste Paragraph:</label>
             <textarea
               value={localParagraph}
               onChange={(e) => setLocalParagraph(e.target.value)}
-              className="w-full h-40 px-4 py-2 rounded-lg border bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-40 px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-600 dark:text-white dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows="4"
               placeholder="Enter the paragraph users will type in the race..."
             ></textarea>
