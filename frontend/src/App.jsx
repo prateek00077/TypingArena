@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import TypingBox from './components/TypingBox';
+import TypingBox from './pages/HomePage';
 import Header from './components/Header';
-import Profile from './components/Profile';
-import Settings from './components/Settings';
-import RoomPage from './components/RoomPage';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import RoomPage from './pages/RoomPage';
 import TypingRoom from './components/TypingRoom';
 import ProtectedRoute from './components/ProtectedRoute';
 import RankCard from './components/RankCard';
@@ -12,14 +12,12 @@ import Login from './pages/Login';
 import { useState } from 'react';
 
 const AppContent = () => {
-  const location = useLocation();
-  const hideHeader = location.pathname === '/login' || location.pathname === '/register';
   const [paragraph, setParagraph] = useState('');
   const [duration, setDuration] = useState(1);
 
   return (
     <div className="text-green-900">
-      {!hideHeader && <Header />}
+      <Header />
       <Routes>
         <Route path="/register" element={<SignUp />} />
         <Route path="/login" element={<Login />} />

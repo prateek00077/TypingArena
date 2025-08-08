@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { generateRandomText } from '../utils/textGenerator';
+import { generateRandomText } from '../utils/textGenerator.js';
 import { calculateResults } from '../utils/calculateResults.js';   
-import ResultModal from './ResultModel';
-import ClockTimer from './ClockTimer.jsx';
-import TypingArea from './TypingArea';
+import ResultModal from '../components/ResultModel.jsx';
+import ClockTimer from '../components/ClockTimer.jsx';
+import TypingArea from '../components/TypingArea.jsx';
 
 const TypingBox = () => {
   const [text, setText] = useState('');
@@ -42,7 +42,7 @@ const TypingBox = () => {
   };
 
   return (
-    <div className="flex h-screen pt-16 bg-gray-200 overflow-hidden justify-center items-center">
+    <div className="flex h-screen pt-16 bg-gray-200 dark:bg-gray-900 overflow-hidden justify-center items-center">
       {/* Left Typing Section - 70% */}
       <div className="w-[90%] flex flex-col items-start justify-center px-8">
         <TypingArea

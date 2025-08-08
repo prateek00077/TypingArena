@@ -15,6 +15,7 @@ const TypingRoom = ({ paragraph }) => {
     const [liveLeaderboard, setLiveLeaderboard] = useState([]);
     const [showRankCard, setShowRankCard] = useState(false);
     const intervalRef = useRef(null);
+    const [startTime, setStartTime] = useState(null);
 
     const { room, leaveRoom,getRoomDetails } = useRoomContext();
     const { user } = useAppContext();
@@ -32,10 +33,10 @@ const TypingRoom = ({ paragraph }) => {
         socket.emit("joinRoom", { roomId: room._id, userId: user._id, username: user.username });
 
         const handleGameStart = ({ startTime }) => {
-            const countdown = Math.max(0, Math.floor((startTime - Date.now()) / 1000));
-            setPhase("waiting");
-            setTimer(countdown);
+        setPhase("waiting");
+        setStartTime(startTime); // server time in ms
         };
+
         
         const handleGameEnd = async () => {
         setPhase("finished");
@@ -60,43 +61,55 @@ const TypingRoom = ({ paragraph }) => {
         };
     }, [socket, room?._id, user?._id, navigate]);
 
-    useEffect(() => {
-        clearInterval(intervalRef.current);
-    
-        if (phase === "waiting" && timer > 0) {
-            intervalRef.current = setInterval(() => {
-                setTimer(prev => prev - 1);
-            }, 1000);
-        } else if (phase === "waiting" && timer <= 0) {
-            setPhase("typing");
-            setTimer((room?.duration || 1) * 60);
-        } else if (phase === "typing" && timer > 0) {
-            intervalRef.current = setInterval(() => {
-                setTimer(prev => prev - 1);
-            }, 1000);
-        } else if (phase === "typing" && timer <= 0) {
-            if (userIsHost) {
-                socket.emit("endGame", { roomId: room._id });
+useEffect(() => {
+    let animationFrame;
+
+    const updateTimer = () => {
+        if (phase === "waiting" && startTime) {
+            const timeLeft = Math.max(0, Math.floor((startTime - Date.now()) / 1000));
+            setTimer(timeLeft);
+            if (timeLeft <= 0) {
+                setPhase("typing");
+                const typingEndTime = Date.now() + (room?.duration || 1) * 60 * 1000;
+                setStartTime(typingEndTime); // reuse same state for typing end time
+            }
+        } else if (phase === "typing" && startTime) {
+            const timeLeft = Math.max(0, Math.floor((startTime - Date.now()) / 1000));
+            setTimer(timeLeft);
+            if (timeLeft <= 0) {
+                if (userIsHost) {
+                    socket.emit("endGame", { roomId: room._id });
+                }
+                setPhase("finished");
             }
         }
-    
-        return () => clearInterval(intervalRef.current);
-    }, [phase, timer, room?.duration, userIsHost, socket, room?._id]);
+
+        animationFrame = requestAnimationFrame(updateTimer);
+    };
+
+    updateTimer();
+
+    return () => cancelAnimationFrame(animationFrame);
+}, [phase, startTime, userIsHost, room?.duration, room?._id, socket]);
+
 
 
     const calculateWPM = (typed) => {
-        const timeElapsed = ((room?.duration || 1) * 60) - timer;
-        if (timeElapsed <= 0) return 0;
-        const wordsTyped = typed.trim().split(/\s+/).filter(Boolean).length;
-        const minutes = timeElapsed / 60;
-        return Math.round(wordsTyped / minutes);
-    };
+    const elapsed = ((room?.duration || 1) * 60) - timer;
+    if (elapsed <= 0) return 0;
+
+    const words = typed.trim().split(/\s+/).filter(Boolean).length;
+    return Math.round((words / elapsed) * 60);
+};
+
 
     const calculateAccuracy = (typed, para) => {
-        if (!typed) return 100;
-        const correctChars = typed.split('').filter((char, i) => char === para[i]).length;
-        return Math.round((correctChars / typed.length) * 100);
-    };
+    if (!typed) return 100;
+    const correctChars = typed.split('').filter((char, i) => char === para[i]).length;
+    const total = Math.max(typed.length, para.length); // penalize for missing
+    return Math.round((correctChars / total) * 100);
+};
+
 
     const handleInputChange = (e) => {
         const value = e.target.value;
@@ -135,72 +148,73 @@ const TypingRoom = ({ paragraph }) => {
             socket.emit("endGame", { roomId: room._id });
         }
     };
-    
     return (
-        <div className="h-screen w-full overflow-hidden bg-gray-100 flex flex-row p-4 gap-4">
-            {showRankCard && <RankCard onClose={() => navigate('/room')} />}
-            
-            <div className="flex mt-20 flex-col w-2/3 items-center gap-4">
-                <div className="h-20 flex items-center justify-center">
-                    {(phase === "waiting" || phase === "typing") && (
-                        <div className="flex flex-row gap-3 items-center">
-                            <h1 className="text-3xl text-gray-800 font-bold">
-                                {phase === "waiting" ? "Starts In" : "Time Left"}
-                            </h1>
-                            <FcClock className="text-5xl" />
-                            <div className="text-3xl font-bold text-red-700">{timer}s</div>
-                        </div>
-                    )}
-                </div>
-                <TypingArea
-                    paragraph={paragraph || "Loading paragraph..."}
-                    userInput={userInput}
-                    onInputChange={handleInputChange}
-                    disabled={phase !== "typing"}
-                />
-            </div>
+    <div className="h-screen w-full overflow-hidden bg-gray-100 dark:bg-gray-900 flex flex-row p-4 gap-4">
+        {showRankCard && <RankCard onClose={() => navigate('/room')} />}
 
-            <div className="w-1/3 p-3 flex flex-col gap-4">
-                <div className="flex-1 overflow-hidden">
-                    <Leaderboard users={liveLeaderboard} />
-                </div>
-                <div className="bg-white rounded-lg shadow p-4 space-y-3">
-                    <p className="text-lg text-center text-gray-700">
-                        <strong>Room ID:</strong> {room?._id || 'N/A'}
-                    </p>
-                    <div className="flex gap-2">
-                        {userIsHost ? (
-                            <>
-                                <button
-                                    className="flex-1 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2 disabled:opacity-50"
-                                    onClick={handleStart}
-                                    disabled={phase !== "idle"}
-                                >
-                                    Start Game
-                                </button>
-                                <button
-                                    className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2"
-                                    onClick={handleEnd}
-                                >
-                                    End Game
-                                </button>
-                            </>
-                        ) : (
-                            <button
-                                className="w-full bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
-                                onClick={() => {
-                                    if(leaveRoom) leaveRoom(room._id);
-                                    navigate("/room");
-                                }}
-                            >
-                                Leave Room
-                            </button>
-                        )}
-                    </div>
-                </div>
+      {/* Left Side: Typing Section */}
+    <div className="flex mt-20 flex-col w-2/3 items-center gap-4">
+        <div className="h-20 flex items-center justify-center">
+        {(phase === "waiting" || phase === "typing") && (
+            <div className="flex flex-row gap-3 items-center">
+            <h1 className="text-3xl text-gray-800 dark:text-gray-100 font-bold">
+                {phase === "waiting" ? "Starts In" : "Time Left"}
+            </h1>
+            <FcClock className="text-5xl" />
+            <div className="text-3xl font-bold text-red-700 dark:text-red-400">{timer}s</div>
+            </div>
+        )}
+        </div>
+        <TypingArea
+            paragraph={paragraph || "Loading paragraph..."}
+            userInput={userInput}
+            onInputChange={handleInputChange}
+            disabled={phase !== "typing"}
+        />
+        </div>
+
+      {/* Right Side: Leaderboard + Controls */}
+        <div className="w-1/3 p-3 flex flex-col gap-4">
+        <div className="flex-1 overflow-hidden">
+            <Leaderboard users={liveLeaderboard} />
+        </div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3">
+            <p className="text-lg text-center text-gray-700 dark:text-gray-200">
+            <strong>Room ID:</strong> {room?._id || 'N/A'}
+            </p>
+            <div className="flex gap-2">
+            {userIsHost ? (
+                <>
+                <button
+                    className="flex-1 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2 disabled:opacity-50"
+                    onClick={handleStart}
+                    disabled={phase !== "idle"}
+                >
+                    Start Game
+                </button>
+                <button
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded px-4 py-2"
+                    onClick={handleEnd}
+                >
+                    End Game
+                </button>
+                </>
+            ) : (
+                <button
+                className="w-full bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded px-4 py-2"
+                onClick={() => {
+                    if (leaveRoom) leaveRoom(room._id);
+                    navigate("/room");
+                }}
+                >
+                Leave Room
+                </button>
+            )}
             </div>
         </div>
-    );
+        </div>
+    </div>
+);
 };
 
 export default TypingRoom;
