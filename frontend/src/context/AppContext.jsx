@@ -9,9 +9,10 @@ const AppContext = createContext();
 // Custom hook for easy usage
 export const useAppContext = () => useContext(AppContext);
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 // Axios instance with credentials
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: `${BACKEND_URL}/api`,
   withCredentials: true,
 });
 
