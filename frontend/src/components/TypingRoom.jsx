@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { FcClock } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
-import Leaderboard from './Leaderboard.jsx';
+import Leaderboard from './LeaderBoard.jsx';
 import TypingArea from "./TypingArea.jsx";
 import { useRoomContext } from '../context/RoomContext';
 import { useAppContext } from '../context/AppContext';
@@ -61,8 +61,7 @@ const TypingRoom = ({ paragraph }) => {
             socket.off('gameEnd', handleGameEnd);
             socket.off('leaderboardUpdate', handleLeaderboardUpdate);
         };
-    }, [socket, room?._id, user?._id, navigate, room?.duration]);
-
+    }, [socket, room?._id, user?._id, navigate, room?.duration, getRoomDetails, room]);
 
     useEffect(() => {
         if (phase === "idle" || phase === "finished") {

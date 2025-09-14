@@ -4,7 +4,7 @@ import App from './App.jsx'
 import { AppProvider } from './context/AppContext.jsx';
 import { ResultProvider } from './context/ResultContext.jsx';
 import { RoomProvider } from './context/RoomContext.jsx';
-import { BrowserRouter } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { SocketProvider } from './context/SocketContext.jsx';
 
 
