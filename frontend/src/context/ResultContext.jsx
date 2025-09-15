@@ -9,7 +9,7 @@ export const useResultContext = () => useContext(ResultContext);
 
 // Axios instance with credentials
 const api = axios.create({
-  baseURL: "http://localhost:3000/api/result", // Change to your backend URL/port if needed
+  baseURL: `${import.meta.env.VITE_BACKEND_URL}/api/result`, // Change to your backend URL/port if needed
   withCredentials: true,
 });
 

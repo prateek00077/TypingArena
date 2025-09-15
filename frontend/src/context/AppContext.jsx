@@ -11,7 +11,7 @@ export const useAppContext = () => useContext(AppContext);
 
 // Axios instance with credentials
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: `${import.meta.env.VITE_BACKEND_URL}/api`,
   withCredentials: true,
 });
 
@@ -39,6 +39,7 @@ export const AppProvider = ({ children }) => {
 
   // Login
   const login = async (usernameOrEmail, password) => {
+    console.log(import.meta.env.VITE_BACKEND_URL)
     setLoading(true)
     setError(null)
     try {

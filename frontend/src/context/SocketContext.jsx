@@ -8,7 +8,7 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const socketInstance = io("http://localhost:3000"); 
+    const socketInstance = io(`${import.meta.env.VITE_BACKEND_URL}`); 
     setSocket(socketInstance);
 
     socketInstance.on('connect', () => {

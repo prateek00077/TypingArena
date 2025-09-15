@@ -9,7 +9,7 @@ export const useRoomContext = () => useContext(RoomContext);
 
 // Axios instance with credentials
 const api = axios.create({
-  baseURL: "http://localhost:3000/api/room", // Change to your backend URL/port if needed
+  baseURL: `${import.meta.env.VITE_BACKEND_URL}/api/room`, // Change to your backend URL/port if needed
   withCredentials: true,
 });
 
