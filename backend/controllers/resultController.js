@@ -31,7 +31,5 @@ export const getResults = async(req,res)=>{
 
     const results = await Result.find({userId});
 
-    if(results.length === 0) return res.status(400).send({message : "No results found"});
-
     return res.status(200).send(results);
 }

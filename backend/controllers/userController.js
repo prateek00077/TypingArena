@@ -1,6 +1,8 @@
 import User from '../models/userModel.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { configDotenv } from 'dotenv';
+configDotenv();
 
 export const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
@@ -14,7 +16,7 @@ export const registerUser = async (req, res) => {
     res.status(201).cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'None',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 7* 24 * 60 * 60 * 1000,
     }).send({ user });
 };
@@ -38,7 +40,7 @@ export const loginUser = async (req, res) => {
     return res.status(200).cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // Only secure in production
-        sameSite: 'None',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000
     }).send({ user });
 };
@@ -52,7 +54,7 @@ export const logoutUser = async (req,res) => {
     .clearCookie('token', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'None',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     })
     .status(200)
     .send({ message: 'User logged out successfully' });
